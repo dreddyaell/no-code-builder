@@ -1,7 +1,7 @@
-import Header1 from "./variants/Header1";
-import Header2 from "./variants/Header2";
-import Footer1 from "./variants/Footer1";
-import Footer2 from "./variants/Footer2";
+import Header1 from "./variants/headers/Header1";
+import Header2 from "./variants/headers/Header2";
+import Footer1 from "./variants/footers/Footer1";
+import Footer2 from "./variants/footers/Footer2";
 
 const componentMap: { [key: string]: React.FC } = {
   "header1": Header1,
