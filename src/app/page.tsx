@@ -1,4 +1,5 @@
 import Image from "next/image";
+import LayoutBuilder from "@/components/LayoutBuilder";
 
 export default function Home() {
   return (
@@ -14,6 +15,10 @@ export default function Home() {
         />
          <h1>🚀 Next.js werkt!</h1>
          <p>Dit is een testpagina om te controleren of alles goed laadt.</p>
+         <div>
+      <h1 className="text-2xl font-bold">No-Code Website Builder</h1>
+      <LayoutBuilder />
+        </div>
         </main>
         <footer>
       </footer>
