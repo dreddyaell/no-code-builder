@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import SortableItem from "./SortableItem"; // Helpercomponent voor dragbare items
+import SortableItem from "./SortableItem"; 
 import DynamicComponent from "./DynamicComponent";
 
 export default function LayoutBuilder() {
