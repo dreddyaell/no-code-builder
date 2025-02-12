@@ -1,27 +1,21 @@
-import Image from "next/image";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import LayoutBuilder from "@/components/LayoutBuilder";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-         <h1>🚀 Next.js werkt!</h1>
-         <p>Dit is een testpagina om te controleren of alles goed laadt.</p>
-         <div>
-      <h1 className="text-2xl font-bold">No-Code Website Builder</h1>
-      <LayoutBuilder />
-        </div>
-        </main>
-        <footer>
-      </footer>
+    <div className="min-h-screen flex flex-col">
+      {/* ✅ Full-width Header met bewerkbare elementen */}
+      <Header />
+
+      {/* ✅ Main Content */}
+      <main className="flex-grow flex flex-col items-center justify-center p-8 gap-8 mt-16">
+        <h1 className="text-2xl font-bold">🚀 No-Code Website Builder</h1>
+        <LayoutBuilder />
+      </main>
+
+      {/* ✅ Full-width Footer met bewerkbare elementen */}
+      <Footer />
     </div>
   );
 }
