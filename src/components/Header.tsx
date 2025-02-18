@@ -5,7 +5,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import Taskbar from "./Taskbar";
 
-// Definieer het type voor de header items
+// Type voor header items
 interface HeaderItem {
   id: string;
   content: string;
@@ -15,8 +15,11 @@ interface HeaderItem {
 }
 
 export default function Header() {
+  const [headerColor, setHeaderColor] = useState("#3b82f6"); // Standaard blauw
   const [headerItems, setHeaderItems] = useState<HeaderItem[]>([]);
   const [isClient, setIsClient] = useState(false);
+
+  // Voor het modal venster
   const [showModal, setShowModal] = useState(false);
   const [newElementType, setNewElementType] = useState<"text" | "image" | null>(null);
   const [newContent, setNewContent] = useState<string>("");
@@ -25,11 +28,7 @@ export default function Header() {
   useEffect(() => {
     setIsClient(true);
     const savedItems = JSON.parse(localStorage.getItem("headerItems") || "[]");
-    setHeaderItems(savedItems.length > 0 ? savedItems : [
-      { id: "logo", content: "🌐 Logo", type: "text", width: 150, height: 50 },
-      { id: "nav", content: "📌 Navigatie", type: "text", width: 200, height: 50 },
-      { id: "cta", content: "🔵 Call-To-Action", type: "text", width: 180, height: 50 },
-    ]);
+    setHeaderItems(savedItems);
   }, []);
 
   useEffect(() => {
@@ -44,7 +43,9 @@ export default function Header() {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    setHeaderItems((prevItems) => arrayMove(prevItems, prevItems.findIndex(i => i.id === active.id), prevItems.findIndex(i => i.id === over.id)));
+    setHeaderItems((prevItems) =>
+      arrayMove(prevItems, prevItems.findIndex(i => i.id === active.id), prevItems.findIndex(i => i.id === over.id))
+    );
   };
 
   const openModal = (type: "text" | "image") => {
@@ -82,39 +83,54 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full fixed top-0 left-0 bg-blue-500 text-white p-4 shadow-md flex flex-col items-center">
-      <Taskbar openModal={openModal} />
+    <header
+      className="w-full fixed top-0 left-0 text-white p-4 shadow-md flex flex-col items-center"
+      style={{ backgroundColor: headerColor }}
+    >
+      {/* Taskbar met kleurkiezer en opties */}
+      <Taskbar openModal={openModal} setHeaderColor={setHeaderColor} />
+
+      {/* Drag & Drop functionaliteit */}
       {isClient && (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={headerItems.map((item) => item.id)}>
             <div className="flex gap-4">
               {headerItems.map((item) => (
-                <SortableItem key={item.id} id={item.id}>
-                  <div
-                    className="border bg-white text-black rounded shadow-md cursor-grab flex items-center justify-center p-2"
-                    style={{ width: `${item.width}px`, height: `${item.height}px` }}
-                  >
-                    {item.type === "text" ? (
-                      <span className="w-full h-full flex items-center justify-center text-center">
-                        {item.content}
-                      </span>
-                    ) : (
-                      <img src={item.content} alt="Uploaded" className="w-full h-full object-cover rounded" />
-                    )}
-                  </div>
+                <div key={item.id} className="flex flex-col items-center">
+                  <SortableItem id={item.id}>
+                    <div
+                      className="border bg-white text-black rounded shadow-md cursor-grab flex items-center justify-center p-2 relative"
+                      style={{
+                        width: `${item.width}px`,
+                        height: `${item.height}px`,
+                        textAlign: "center",
+                        overflow: "hidden",
+                        wordWrap: "break-word",
+                      }}
+                    >
+                      {item.type === "text" ? (
+                        <span className="w-full h-full flex items-center justify-center">
+                          {item.content}
+                        </span>
+                      ) : (
+                        <img src={item.content} alt="Uploaded" className="w-full h-full object-cover rounded" />
+                      )}
+                    </div>
+                  </SortableItem>
                   <button
                     onClick={() => removeElement(item.id)}
                     className="p-1 bg-red-500 text-white rounded hover:bg-red-700 mt-2"
                   >
                     ❌
                   </button>
-                </SortableItem>
+                </div>
               ))}
             </div>
           </SortableContext>
         </DndContext>
       )}
 
+      {/* Modal venster voor nieuw element */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded shadow-md w-96">
