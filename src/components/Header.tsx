@@ -16,6 +16,7 @@ interface HeaderItem {
 
 export default function Header() {
   const [headerColor, setHeaderColor] = useState("#3b82f6"); // Standaard blauw
+  const [headerHeight, setHeaderHeight] = useState(80); // Standaard hoogte
   const [headerItems, setHeaderItems] = useState<HeaderItem[]>([]);
   const [isClient, setIsClient] = useState(false);
 
@@ -29,13 +30,16 @@ export default function Header() {
     setIsClient(true);
     const savedItems = JSON.parse(localStorage.getItem("headerItems") || "[]");
     setHeaderItems(savedItems);
+    const savedHeight = localStorage.getItem("headerHeight");
+    if (savedHeight) setHeaderHeight(parseInt(savedHeight));
   }, []);
 
   useEffect(() => {
     if (isClient) {
       localStorage.setItem("headerItems", JSON.stringify(headerItems));
+      localStorage.setItem("headerHeight", headerHeight.toString());
     }
-  }, [headerItems, isClient]);
+  }, [headerItems, headerHeight, isClient]);
 
   const generateId = () => `item-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
@@ -48,13 +52,14 @@ export default function Header() {
     );
   };
 
-  const openModal = (type: "text" | "image") => {
+  const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
+    if (section !== "header") return; // Alleen de header ondersteunen in deze component
     setNewElementType(type);
     setShowModal(true);
     setNewContent("");
     setImagePreview(null);
   };
-
+  
   const saveNewElement = () => {
     if (!newElementType) return;
     if (newElementType === "text" && newContent.trim() === "") return;
@@ -84,11 +89,17 @@ export default function Header() {
 
   return (
     <header
-      className="w-full fixed top-0 left-0 text-white p-4 shadow-md flex flex-col items-center"
-      style={{ backgroundColor: headerColor }}
+      className="w-full fixed top-0 left-0 text-white shadow-md flex flex-col items-center transition-all duration-300"
+      style={{ backgroundColor: headerColor, height: `${headerHeight}px` }}
     >
-      {/* Taskbar met kleurkiezer en opties */}
-      <Taskbar openModal={openModal} setHeaderColor={setHeaderColor} />
+      {/* Taskbar met kleurkiezer, hoogte-slider en opties */}
+      <Taskbar
+  openModal={openModal}
+  setHeaderColor={setHeaderColor}
+  setHeaderHeight={setHeaderHeight}
+  headerHeight={headerHeight}
+    />
+
 
       {/* Drag & Drop functionaliteit */}
       {isClient && (
