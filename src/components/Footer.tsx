@@ -1,35 +1,45 @@
-// components/Footer.tsx
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 
 export default function Footer() {
-  const [footerItems, setFooterItems] = useState([
-    { id: "copyright", content: "© 2025 No-Code Builder" },
-    { id: "socials", content: "📱 Social Media Links" },
-    { id: "contact", content: "📧 Contactgegevens" },
-  ]);
+  const [footerItems, setFooterItems] = useState<{ id: string; content: string }[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const savedItems = JSON.parse(localStorage.getItem("footerItems") || "[]");
+    setFooterItems(savedItems.length > 0 ? savedItems : [
+      { id: "copyright", content: "© 2025 No-Code Builder" },
+      { id: "socials", content: "📱 Social Media Links" },
+      { id: "contact", content: "📧 Contactgegevens" },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      localStorage.setItem("footerItems", JSON.stringify(footerItems));
+    }
+  }, [footerItems, isClient]);
+
+  const addNewElement = () => {
+    const newItem = { id: `item-${crypto.randomUUID()}`, content: "🆕 Nieuw Element" };
+    setFooterItems((prevItems) => [...prevItems, newItem]);
+  };
+
+  const removeElement = (id: string) => {
+    setFooterItems((prevItems) => prevItems.filter(item => item.id !== id));
+  };
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
-    const oldIndex = footerItems.findIndex((item) => item.id === active.id);
-    const newIndex = footerItems.findIndex((item) => item.id === over.id);
-
-    setFooterItems(arrayMove(footerItems, oldIndex, newIndex));
+    setFooterItems((prevItems) => arrayMove(prevItems, prevItems.findIndex(i => i.id === active.id), prevItems.findIndex(i => i.id === over.id)));
   };
 
-  const addNewElement = () => {
-    const newItem = { id: `item-${Date.now()}`, content: "🆕 Nieuw Element" };
-    setFooterItems([...footerItems, newItem]);
-  };
-
-  const removeElement = (id: string) => {
-    setFooterItems(footerItems.filter(item => item.id !== id));
-  };
+  if (!isClient || footerItems.length === 0) return null; // ❗ Voorkom SSR mismatch
 
   return (
     <footer className="w-full fixed bottom-0 left-0 bg-blue-500 text-white p-4 shadow-md flex flex-col items-center">
