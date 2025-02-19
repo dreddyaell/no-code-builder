@@ -11,6 +11,8 @@ interface TaskbarProps {
   setFooterColor?: (color: string) => void;
   setFooterHeight?: (height: number) => void;
   footerHeight?: number;
+  setFontSize?: (size: number) => void;
+  fontSize?: number;
 }
 
 export default function Taskbar({
@@ -24,10 +26,28 @@ export default function Taskbar({
   setFooterColor,
   setFooterHeight,
   footerHeight,
+  setFontSize,
+  fontSize,
 }: TaskbarProps) {
   return (
     <div className="fixed top-2 left-2 bg-gray-800 text-white p-3 rounded shadow-md z-50">
       <h3 className="text-lg font-bold mb-2">Instellingen</h3>
+      
+      {/* Lettergrootte Optie */}
+      {setFontSize && (
+        <div className="mt-2">
+          <label className="block text-sm">Lettergrootte: {fontSize}px</label>
+          <input
+            type="range"
+            min="10"
+            max="50"
+            value={fontSize}
+            onChange={(e) => setFontSize(parseInt(e.target.value))}
+            className="w-full"
+          />
+        </div>
+      )}
+      
       {/* Header Opties */}
       <h4 className="font-semibold">Header</h4>
       <button
@@ -45,7 +65,7 @@ export default function Taskbar({
       {setHeaderColor && (
         <div className="mt-2">
           <label className="block text-sm">Header Kleur:</label>
-          <input type="color" onChange={(e) => setHeaderColor(e.target.value)} className="w-full" />
+          <input type="color" onChange={(e) => setHeaderColor(e.target.value)} className="w-full bg-transparent border-none" />
         </div>
       )}
       {setHeaderHeight && (
@@ -72,7 +92,7 @@ export default function Taskbar({
       {setBodyColor && (
         <div className="mt-2">
           <label className="block text-sm">Body Kleur:</label>
-          <input type="color" onChange={(e) => setBodyColor(e.target.value)} className="w-full" />
+          <input type="color" onChange={(e) => setBodyColor(e.target.value)} className="w-full bg-transparent border-none" />
         </div>
       )}
       {setBodyHeight && (
@@ -99,7 +119,7 @@ export default function Taskbar({
       {setFooterColor && (
         <div className="mt-2">
           <label className="block text-sm">Footer Kleur:</label>
-          <input type="color" onChange={(e) => setFooterColor(e.target.value)} className="w-full" />
+          <input type="color" onChange={(e) => setFooterColor(e.target.value)} className="w-full bg-transparent border-none" />
         </div>
       )}
       {setFooterHeight && (
