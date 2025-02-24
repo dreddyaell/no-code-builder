@@ -12,13 +12,17 @@ interface HeaderItem {
   type: "text" | "image";
   width: number;
   height: number;
+  fontSize: number;
+  fontFamily: string;
 }
 
 export default function Header() {
-  const [headerColor, setHeaderColor] = useState("#3b82f6"); // Standaard blauw
-  const [headerHeight, setHeaderHeight] = useState(80); // Standaard hoogte
+  const [headerColor, setHeaderColor] = useState("#3b82f6");
+  const [headerHeight, setHeaderHeight] = useState(80);
   const [headerItems, setHeaderItems] = useState<HeaderItem[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [fontSize, setFontSize] = useState(16);
+  const [fontFamily, setFontFamily] = useState("Arial");
 
   // Voor het modal venster
   const [showModal, setShowModal] = useState(false);
@@ -53,13 +57,13 @@ export default function Header() {
   };
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
-    if (section !== "header") return; // Alleen de header ondersteunen in deze component
+    if (section !== "header") return;
     setNewElementType(type);
     setShowModal(true);
     setNewContent("");
     setImagePreview(null);
   };
-  
+
   const saveNewElement = () => {
     if (!newElementType) return;
     if (newElementType === "text" && newContent.trim() === "") return;
@@ -70,6 +74,8 @@ export default function Header() {
       type: newElementType,
       width: 150,
       height: 50,
+      fontSize: fontSize,
+      fontFamily: fontFamily,
     };
     setHeaderItems((prevItems) => [...prevItems, newItem]);
     setShowModal(false);
@@ -92,14 +98,17 @@ export default function Header() {
       className="w-full fixed top-0 left-0 text-white shadow-md flex flex-col items-center transition-all duration-300"
       style={{ backgroundColor: headerColor, height: `${headerHeight}px` }}
     >
-      {/* Taskbar met kleurkiezer, hoogte-slider en opties */}
+      {/* Taskbar met instellingen */}
       <Taskbar
-  openModal={openModal}
-  setHeaderColor={setHeaderColor}
-  setHeaderHeight={setHeaderHeight}
-  headerHeight={headerHeight}
-    />
-
+        openModal={openModal}
+        setHeaderColor={setHeaderColor}
+        setHeaderHeight={setHeaderHeight}
+        headerHeight={headerHeight}
+        setFontSize={setFontSize}
+        fontSize={fontSize}
+        setFontFamily={setFontFamily}
+        fontFamily={fontFamily}
+      />
 
       {/* Drag & Drop functionaliteit */}
       {isClient && (
@@ -117,6 +126,8 @@ export default function Header() {
                         textAlign: "center",
                         overflow: "hidden",
                         wordWrap: "break-word",
+                        fontSize: `${item.fontSize}px`,
+                        fontFamily: item.fontFamily,
                       }}
                     >
                       {item.type === "text" ? (
@@ -147,13 +158,16 @@ export default function Header() {
           <div className="bg-white p-6 rounded shadow-md w-96">
             <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>
             {newElementType === "text" ? (
-              <input
-                type="text"
-                value={newContent}
-                onChange={(e) => setNewContent(e.target.value)}
-                className="w-full p-2 border rounded text-black"
-                placeholder="Voer tekst in"
-              />
+              <>
+                <input
+                  type="text"
+                  value={newContent}
+                  onChange={(e) => setNewContent(e.target.value)}
+                  className="w-full p-2 border rounded text-black"
+                  placeholder="Voer tekst in"
+                  style={{ fontSize: `${fontSize}px`, fontFamily: fontFamily }}
+                />
+              </>
             ) : (
               <div className="flex flex-col items-center">
                 <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
