@@ -17,18 +17,18 @@ interface HeaderItem {
 }
 
 export default function Header() {
-  const [headerColor, setHeaderColor] = useState("#3b82f6");
-  const [headerHeight, setHeaderHeight] = useState(80);
+  const [headerColor, setHeaderColor] = useState("#3b82f6"); // Standaard blauw
+  const [headerHeight, setHeaderHeight] = useState(80); // Standaard hoogte
   const [headerItems, setHeaderItems] = useState<HeaderItem[]>([]);
   const [isClient, setIsClient] = useState(false);
-  const [fontSize, setFontSize] = useState(16);
-  const [fontFamily, setFontFamily] = useState("Arial");
 
-  // Voor het modal venster
+  // Voor modal venster
   const [showModal, setShowModal] = useState(false);
   const [newElementType, setNewElementType] = useState<"text" | "image" | null>(null);
   const [newContent, setNewContent] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [fontSize, setFontSize] = useState(16);
+  const [fontFamily, setFontFamily] = useState("Arial");
 
   useEffect(() => {
     setIsClient(true);
@@ -74,8 +74,8 @@ export default function Header() {
       type: newElementType,
       width: 150,
       height: 50,
-      fontSize: fontSize,
-      fontFamily: fontFamily,
+      fontSize,
+      fontFamily,
     };
     setHeaderItems((prevItems) => [...prevItems, newItem]);
     setShowModal(false);
@@ -104,10 +104,6 @@ export default function Header() {
         setHeaderColor={setHeaderColor}
         setHeaderHeight={setHeaderHeight}
         headerHeight={headerHeight}
-        setFontSize={setFontSize}
-        fontSize={fontSize}
-        setFontFamily={setFontFamily}
-        fontFamily={fontFamily}
       />
 
       {/* Drag & Drop functionaliteit */}
@@ -123,11 +119,11 @@ export default function Header() {
                       style={{
                         width: `${item.width}px`,
                         height: `${item.height}px`,
+                        fontSize: `${item.fontSize}px`,
+                        fontFamily: item.fontFamily,
                         textAlign: "center",
                         overflow: "hidden",
                         wordWrap: "break-word",
-                        fontSize: `${item.fontSize}px`,
-                        fontFamily: item.fontFamily,
                       }}
                     >
                       {item.type === "text" ? (
@@ -139,6 +135,33 @@ export default function Header() {
                       )}
                     </div>
                   </SortableItem>
+
+                  {/* Grootte wijzigen */}
+                  <div className="flex flex-col items-center">
+                    <label className="text-sm text-white">📏 Breedte: {item.width}px</label>
+                    <input
+                      type="range"
+                      min="50"
+                      max="500"
+                      value={item.width}
+                      onChange={(e) => setHeaderItems(prevItems =>
+                        prevItems.map(i => i.id === item.id ? { ...i, width: parseInt(e.target.value) } : i)
+                      )}
+                      className="w-24"
+                    />
+                    <label className="text-sm text-white">📏 Hoogte: {item.height}px</label>
+                    <input
+                      type="range"
+                      min="30"
+                      max="300"
+                      value={item.height}
+                      onChange={(e) => setHeaderItems(prevItems =>
+                        prevItems.map(i => i.id === item.id ? { ...i, height: parseInt(e.target.value) } : i)
+                      )}
+                      className="w-24"
+                    />
+                  </div>
+
                   <button
                     onClick={() => removeElement(item.id)}
                     className="p-1 bg-red-500 text-white rounded hover:bg-red-700 mt-2"
@@ -158,30 +181,19 @@ export default function Header() {
           <div className="bg-white p-6 rounded shadow-md w-96">
             <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>
             {newElementType === "text" ? (
-              <>
-                <input
-                  type="text"
-                  value={newContent}
-                  onChange={(e) => setNewContent(e.target.value)}
-                  className="w-full p-2 border rounded text-black"
-                  placeholder="Voer tekst in"
-                  style={{ fontSize: `${fontSize}px`, fontFamily: fontFamily }}
-                />
-              </>
+              <input
+                type="text"
+                value={newContent}
+                onChange={(e) => setNewContent(e.target.value)}
+                className="w-full p-2 border rounded text-black"
+                placeholder="Voer tekst in"
+              />
             ) : (
               <div className="flex flex-col items-center">
                 <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
                 {imagePreview && <img src={imagePreview} alt="Preview" className="w-48 h-48 object-cover rounded" />}
               </div>
             )}
-            <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setShowModal(false)} className="p-2 bg-gray-500 text-white rounded">
-                Annuleren
-              </button>
-              <button onClick={saveNewElement} className="p-2 bg-blue-500 text-white rounded">
-                Opslaan
-              </button>
-            </div>
           </div>
         </div>
       )}
