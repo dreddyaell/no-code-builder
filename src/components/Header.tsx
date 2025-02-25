@@ -30,6 +30,27 @@ export default function Header() {
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Arial");
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+const [selectedItem, setSelectedItem] = useState<HeaderItem | null>(null);
+
+const openEditModal = (item: HeaderItem) => {
+  setSelectedItem(item);
+  setEditModalOpen(true);
+};
+
+const updateSelectedItem = (field: keyof HeaderItem, value: any) => {
+  setSelectedItem((prev) => prev ? { ...prev, [field]: value } : null);
+};
+
+const saveEditChanges = () => {
+  if (!selectedItem) return;
+  setHeaderItems((prevItems) =>
+    prevItems.map((item) => (item.id === selectedItem.id ? selectedItem : item))
+  );
+  setEditModalOpen(false);
+};
+
+
   useEffect(() => {
     setIsClient(true);
     const savedItems = JSON.parse(localStorage.getItem("headerItems") || "[]");
@@ -110,20 +131,24 @@ export default function Header() {
       {isClient && (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={headerItems.map((item) => item.id)}>
-            <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 w-full">
               {headerItems.map((item) => (
                 <div key={item.id} className="flex flex-col items-center">
-                  <SortableItem id={item.id}>
+                 <SortableItem key={item.id} id={item.id}>
                     <div
-                      className="border bg-white text-black rounded shadow-md cursor-grab flex items-center justify-center p-2 relative"
-                      style={{
-                        width: `${item.width}px`,
-                        height: `${item.height}px`,
-                        fontSize: `${item.fontSize}px`,
-                        fontFamily: item.fontFamily,
-                        textAlign: "center",
-                        overflow: "hidden",
-                        wordWrap: "break-word",
+                        className="bg-none text-black rounded flex flex-col items-start justify-start p-2 relative"
+                        style={{
+                          width: `${item.width}px`,
+                          height: `${item.height}px`,
+                          fontSize: `${item.fontSize}px`,
+                          fontFamily: item.fontFamily,
+                          textAlign: "left",
+                          overflowWrap: "break-word",
+                          wordBreak: "break-word",
+                          padding: "6px",
+                          border: "none", 
+                          boxShadow: "none", 
+                          outline: "none", 
                       }}
                     >
                       {item.type === "text" ? (
@@ -135,6 +160,22 @@ export default function Header() {
                       )}
                     </div>
                   </SortableItem>
+
+                   {/* Bewerk-knop */}
+  <button
+    onClick={() => openEditModal(item)}
+    className="mt-2 p-1 bg-gray-500 text-white rounded hover:bg-gray-700"
+  >
+    ⚙️ Bewerk
+  </button>
+
+  {/* Verwijder-knop */}
+  <button
+    onClick={() => removeElement(item.id)}
+    className="p-1 bg-red-500 text-white rounded hover:bg-red-700 mt-2"
+  >
+    ❌
+  </button>
 
                   {/* Grootte wijzigen */}
                   <div className="flex flex-col items-center">
@@ -177,26 +218,141 @@ export default function Header() {
 
       {/* Modal venster voor nieuw element */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>
-            {newElementType === "text" ? (
-              <input
-                type="text"
-                value={newContent}
-                onChange={(e) => setNewContent(e.target.value)}
-                className="w-full p-2 border rounded text-black"
-                placeholder="Voer tekst in"
-              />
-            ) : (
-              <div className="flex flex-col items-center">
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
-                {imagePreview && <img src={imagePreview} alt="Preview" className="w-48 h-48 object-cover rounded" />}
-              </div>
-            )}
-          </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded shadow-md w-96 relative">
+      <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>
+
+      {/* Tekst invoer voor nieuw element */}
+      {newElementType === "text" ? (
+        <input
+          type="text"
+          value={newContent}
+          onChange={(e) => setNewContent(e.target.value)}
+          className="w-full p-2 border rounded text-black"
+          placeholder="Voer tekst in"
+        />
+      ) : (
+        // Afbeelding invoer
+        <div className="flex flex-col items-center">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mb-4"
+          />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="w-48 h-48 object-cover rounded"
+            />
+          )}
         </div>
       )}
+      
+
+      {/* Opties voor lettergrootte en lettertype */}
+      {newElementType === "text" && (
+        <div className="mt-4">
+          <label className="block text-sm text-black">Lettergrootte: {fontSize}px</label>
+          <input
+            type="range"
+            min="10"
+            max="50"
+            value={fontSize}
+            onChange={(e) => setFontSize(parseInt(e.target.value))}
+            className="w-full"
+          />
+          <label className="block text-sm text-black mt-2">Lettertype:</label>
+          <select
+            value={fontFamily}
+            onChange={(e) => setFontFamily(e.target.value)}
+            className="w-full bg-gray-200 text-black p-2 rounded"
+          >
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+        </div>
+      )}
+
+{editModalOpen && selectedItem && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded shadow-md w-96">
+      <h2 className="text-xl mb-4 text-black">🎨 Element Bewerken</h2>
+
+      {/* Breedte wijzigen */}
+      <label className="block text-sm text-black">📏 Breedte: {selectedItem.width}px</label>
+      <input
+        type="range"
+        min="50"
+        max="500"
+        value={selectedItem.width}
+        onChange={(e) => updateSelectedItem("width", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Hoogte wijzigen */}
+      <label className="block text-sm text-black mt-2">📏 Hoogte: {selectedItem.height}px</label>
+      <input
+        type="range"
+        min="30"
+        max="300"
+        value={selectedItem.height}
+        onChange={(e) => updateSelectedItem("height", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Lettergrootte wijzigen */}
+      <label className="block text-sm text-black mt-2">🔤 Lettergrootte: {selectedItem.fontSize}px</label>
+      <input
+        type="range"
+        min="10"
+        max="50"
+        value={selectedItem.fontSize}
+        onChange={(e) => updateSelectedItem("fontSize", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Sluiten en opslaan */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button onClick={() => setEditModalOpen(false)} className="p-2 bg-gray-500 text-white rounded">
+          ❌ Annuleren
+        </button>
+        <button onClick={saveEditChanges} className="p-2 bg-blue-500 text-white rounded">
+          ✅ Opslaan
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {/* Knoppen om te annuleren of op te slaan */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => setShowModal(false)}
+          className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+        >
+          Annuleren
+        </button>
+        <button
+          onClick={saveNewElement}
+          className={`p-2 rounded text-white ${
+            newElementType === "text" && newContent.trim() === ""
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700"
+          }`}
+          disabled={newElementType === "text" && newContent.trim() === ""}
+        >
+          Opslaan
+        </button>
+      </div>
+    </div>
+  </div>
+    )}
     </header>
   );
 }
