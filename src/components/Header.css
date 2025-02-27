@@ -1,0 +1,122 @@
+/* Overlay voor de modal */
+.modal {
+    position: fixed;
+    inset: 0; /* Zorgt dat de modal altijd het hele scherm vult */
+    background: rgba(0, 0, 0, 0.5); /* Donkere overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Stijl voor de modal box */
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 300px; /* Zorg dat de modal nooit te klein wordt */
+    max-width: 400px; /* Limiteer de maximale breedte */
+    width: 90%;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+  
+  /* Optionele fade-in animatie voor een mooi effect */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Stijlen voor de tekst in de modal */
+  .modal-content h2 {
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .modal-content label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  /* Input velden */
+  .modal-content input[type="text"],
+  .modal-content select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-top: 5px;
+    background: white;
+  }
+  
+  .modal-content input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  /* Knoppen uitlijnen */
+  .modal-content .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+  
+  /* Stijlen voor de knoppen */
+  .modal-content .save-button {
+    background: #007bff;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 48%;
+  }
+  
+  .modal-content .save-button:hover {
+    background: #0056b3;
+  }
+  
+  .modal-content .cancel-button {
+    background: #6c757d;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 48%;
+  }
+  
+  .modal-content .cancel-button:hover {
+    background: #5a6268;
+  }
+  
+  /* Pictogrammen correct uitlijnen */
+  .modal-content .icon-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-start;
+  }
+  
+  .modal-content .icon-label img {
+    width: 18px;
+    height: 18px;
+  }
+  
