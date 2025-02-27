@@ -8,115 +8,146 @@
     justify-content: center;
     z-index: 1000;
   }
-  
-  /* Stijl voor de modal box */
-  .modal-content {
+
+/* Stijl voor de modal box */
+.modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    min-width: 300px; /* Zorg dat de modal nooit te klein wordt */
-    max-width: 400px; /* Limiteer de maximale breedte */
+    min-width: 300px;
+    max-width: 400px; /* ✅ Zorg dat het een klein venster blijft */
     width: 90%;
     animation: fadeIn 0.2s ease-in-out;
   }
-  
-  /* Optionele fade-in animatie voor een mooi effect */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+/* Optionele fade-in animatie voor een mooi effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-  
-  /* Stijlen voor de tekst in de modal */
-  .modal-content h2 {
-    color: #333;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .modal-content label {
-    display: block;
-    font-size: 14px;
-    color: #333;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  
-  /* Input velden */
-  .modal-content input[type="text"],
-  .modal-content select {
+}
+
+/* Stijlen voor de tekst in de modal */
+.modal-content h2 {
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.modal-content label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Input velden */
+.modal-content input[type="text"] {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 2px solid #333; /* Donkere rand voor beter contrast */
     border-radius: 4px;
     font-size: 16px;
-    margin-top: 5px;
+    color: #000 !important; /* ✅ Zorg dat tekst altijd zwart is */
+    background: white !important; /* ✅ Zorg voor een witte achtergrond */
+}
+
+.modal-content input::placeholder {
+    color: #666 !important; /* ✅ Donkergrijs voor betere zichtbaarheid */
+    opacity: 1; /* ✅ Zorg ervoor dat de browser de opacity niet verlaagt */
+}
+
+.modal-content input[type="range"] {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.modal-content input[type="text"]:focus {
+    border: 2px solid #007bff; /* ✅ Blauw accent bij selectie */
+    outline: none; /* ✅ Verwijdert standaard browser-outline */
+}
+
+/* Knoppen uitlijnen */
+.modal-content .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* Stijlen voor de knoppen */
+.modal-content .save-button {
+  background: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  width: 48%;
+}
+
+.modal-content .save-button:hover {
+  background: #0056b3;
+}
+
+.modal-content .cancel-button {
+  background: #6c757d;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  width: 48%;
+}
+
+.modal-content .cancel-button:hover {
+  background: #5a6268;
+}
+
+.modal-content select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 2px solid #333; /* ✅ Donkere rand voor beter contrast */
     background: white;
-  }
-  
-  .modal-content input[type="range"] {
-    width: 100%;
-    margin-top: 5px;
-  }
-  
-  /* Knoppen uitlijnen */
-  .modal-content .buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-  }
-  
-  /* Stijlen voor de knoppen */
-  .modal-content .save-button {
-    background: #007bff;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 4px;
-    border: none;
+    color: #000 !important; /* ✅ Zorg dat de tekst altijd zwart is */
+    opacity: 1 !important; /* ✅ Voorkom dat de dropdown gedimd wordt */
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    width: 48%;
-  }
-  
-  .modal-content .save-button:hover {
-    background: #0056b3;
-  }
-  
-  .modal-content .cancel-button {
-    background: #6c757d;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    width: 48%;
-  }
-  
-  .modal-content .cancel-button:hover {
-    background: #5a6268;
-  }
-  
-  /* Pictogrammen correct uitlijnen */
-  .modal-content .icon-label {
+}
+
+.modal-content select option {
+    background: white;
+    color: black !important; /* ✅ Zwart voor goede leesbaarheid */
+    padding: 10px;
+}
+
+/* Pictogrammen correct uitlijnen */
+.modal-content .icon-label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    justify-content: flex-start;
-  }
-  
-  .modal-content .icon-label img {
+    gap: 8px; /* ✅ Ruimte tussen pictogram en tekst */
+    font-size: 14px;
+    color: #333; /* ✅ Donkere tekst voor betere zichtbaarheid */
+    font-weight: bold;
+}
+
+.modal-content .icon-label img {
     width: 18px;
     height: 18px;
-  }
-  
+    object-fit: contain; /* ✅ Zorg dat de afbeelding netjes blijft */
+    background: white; /* ✅ Zorg dat een kapotte afbeelding niet zwart wordt */
+    border: 1px solid #ccc; /* ✅ Dunne rand om iconen zichtbaar te maken */
+}
+

@@ -15,7 +15,9 @@ interface HeaderItem {
   height: number;
   fontSize: number;
   fontFamily: string;
+  textColor: string; // ✅ Nieuw veld toegevoegd voor tekstkleur
 }
+
 
 export default function Header() {
   const [headerColor, setHeaderColor] = useState("#3b82f6");
@@ -29,7 +31,28 @@ export default function Header() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Arial");
+  const [textColor, setTextColor] = useState("#000000"); // Standaard zwart
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<HeaderItem | null>(null);
+
+  const openEditModal = (item: HeaderItem) => {
+    setSelectedItem(item);
+    setEditModalOpen(true);
+  };
+  
+  const updateSelectedItem = (field: keyof HeaderItem, value: any) => {
+    setSelectedItem((prev) => prev ? { ...prev, [field]: value } : null);
+  };
+  
+  const saveEditChanges = () => {
+    if (!selectedItem) return;
+    setHeaderItems((prevItems) =>
+      prevItems.map((item) => (item.id === selectedItem.id ? selectedItem : item))
+    );
+    setEditModalOpen(false);
+  };
+  
   useEffect(() => {
     setIsClient(true);
     const savedItems = JSON.parse(localStorage.getItem("headerItems") || "[]");
@@ -76,13 +99,15 @@ export default function Header() {
       type: newElementType,
       width: 200,
       height: 60,
-      fontSize: fontSize, // ✅ Opslaan lettergrootte
-      fontFamily: fontFamily, // ✅ Opslaan lettertype
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+      textColor: textColor, // ✅ Sla de tekstkleur op
     };
   
     setHeaderItems((prevItems) => [...prevItems, newItem]);
     setShowModal(false);
   };
+  
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -104,7 +129,7 @@ export default function Header() {
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={headerItems.map((item) => item.id)}>
             <div className="header-items-container">
-              {headerItems.map((item) => (
+            {headerItems.map((item) => (
                 <div key={item.id} className="header-item">
                   <SortableItem id={item.id}>
                     <div
@@ -114,6 +139,7 @@ export default function Header() {
                         height: `${item.height}px`,
                         fontSize: `${item.fontSize}px`,
                         fontFamily: item.fontFamily,
+                        color: item.textColor,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -134,6 +160,10 @@ export default function Header() {
                       )}
                     </div>
                   </SortableItem>
+                  {/* ✅ Knop om tekst te bewerken */}
+                  {item.type === "text" && (
+                    <button onClick={() => openEditModal(item)} className="edit-button">✏️ Bewerken</button>
+                  )}
                   <button onClick={() => removeElement(item.id)} className="delete-button">❌</button>
                 </div>
               ))}
@@ -142,7 +172,91 @@ export default function Header() {
         </DndContext>
       )}
 
-  {showModal && (
+{editModalOpen && selectedItem && (
+  <div className="modal">
+    <div className="modal-content">
+      <h2>🎨 Element Bewerken</h2>
+
+      {/* Breedte wijzigen */}
+      <label className="block text-sm text-black">📏 Breedte: {selectedItem.width}px</label>
+      <input
+        type="range"
+        min="50"
+        max="500"
+        value={selectedItem.width}
+        onChange={(e) => updateSelectedItem("width", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Hoogte wijzigen */}
+      <label className="block text-sm text-black mt-2">📏 Hoogte: {selectedItem.height}px</label>
+      <input
+        type="range"
+        min="30"
+        max="300"
+        value={selectedItem.height}
+        onChange={(e) => updateSelectedItem("height", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Tekst wijzigen */}
+      <label className="block text-sm text-black mt-2">📝 Tekst:</label>
+      <input
+        type="text"
+        value={selectedItem.content}
+        onChange={(e) => updateSelectedItem("content", e.target.value)}
+        className="w-full p-2 border rounded text-black"
+      />
+
+      {/* Lettergrootte wijzigen */}
+      <label className="block text-sm text-black mt-2">🔤 Lettergrootte: {selectedItem.fontSize}px</label>
+      <input
+        type="range"
+        min="10"
+        max="50"
+        value={selectedItem.fontSize}
+        onChange={(e) => updateSelectedItem("fontSize", parseInt(e.target.value))}
+        className="w-full"
+      />
+
+      {/* Lettertype wijzigen */}
+      <label className="block text-sm text-black mt-2">🖋️ Lettertype:</label>
+      <select
+        value={selectedItem.fontFamily}
+        onChange={(e) => updateSelectedItem("fontFamily", e.target.value)}
+        className="w-full bg-gray-200 text-black p-2 rounded"
+      >
+        <option value="Arial">Arial</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Courier New">Courier New</option>
+      </select>
+
+      {/* Tekstkleur wijzigen */}
+      <label className="block text-sm text-black mt-2">🎨 Tekstkleur:</label>
+      <input
+        type="color"
+        value={selectedItem.textColor}
+        onChange={(e) => updateSelectedItem("textColor", e.target.value)}
+        className="w-full"
+      />
+
+      {/* Sluiten en opslaan */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button onClick={() => setEditModalOpen(false)} className="p-2 bg-gray-500 text-white rounded">
+          ❌ Annuleren
+        </button>
+        <button onClick={saveEditChanges} className="p-2 bg-blue-500 text-white rounded">
+          ✅ Opslaan
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+{showModal && (
   <div className="modal">
     <div className="modal-content">
       <h2>Nieuw Element Toevoegen</h2>
@@ -156,22 +270,27 @@ export default function Header() {
             placeholder="Voer tekst in"
           />
 
-          {/* ✅ Sliders en dropdowns voor styling */}
-          <label className="block mt-3">🔤 Lettergrootte: {fontSize}px</label>
+          {/* 🔤 Lettergrootte */}
+          <label className="icon-label">
+            <img src="/icons/font-size.png" alt="Lettergrootte" />
+            Lettergrootte: {fontSize}px
+          </label>
           <input
             type="range"
             min="10"
             max="50"
             value={fontSize}
             onChange={(e) => setFontSize(parseInt(e.target.value))}
-            className="w-full"
           />
 
-          <label className="block mt-3">🖋️ Lettertype:</label>
+          {/* 🖋️ Lettertype */}
+          <label className="icon-label">
+            <img src="/icons/font-style.png" alt="Lettertype" />
+            Lettertype:
+          </label>
           <select
             value={fontFamily}
             onChange={(e) => setFontFamily(e.target.value)}
-            className="w-full"
           >
             <option value="Arial">Arial</option>
             <option value="Verdana">Verdana</option>
@@ -179,6 +298,17 @@ export default function Header() {
             <option value="Georgia">Georgia</option>
             <option value="Courier New">Courier New</option>
           </select>
+
+          {/* 🎨 Tekstkleur */}
+          <label className="icon-label">
+            <img src="/icons/color-picker.png" alt="Tekstkleur" />
+            Tekstkleur:
+          </label>
+          <input
+            type="color"
+            value={textColor}
+            onChange={(e) => setTextColor(e.target.value)}
+          />
         </>
       ) : (
         <div>
@@ -187,11 +317,13 @@ export default function Header() {
         </div>
       )}
 
-      <button onClick={saveNewElement} className="save-button">Opslaan</button>
-      <button onClick={() => setShowModal(false)} className="cancel-button">Annuleren</button>
+      <div className="buttons">
+        <button onClick={saveNewElement} className="save-button">Opslaan</button>
+        <button onClick={() => setShowModal(false)} className="cancel-button">Annuleren</button>
+      </div>
     </div>
-  </div>
-  )}
+    </div>
+    )}
   </header>
   );
 }
