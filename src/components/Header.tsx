@@ -101,12 +101,18 @@ export default function Header() {
       height: 60,
       fontSize: fontSize,
       fontFamily: fontFamily,
-      textColor: textColor, // ✅ Sla de tekstkleur op
+      textColor: textColor,
     };
   
-    setHeaderItems((prevItems) => [...prevItems, newItem]);
+    setHeaderItems((prevItems) => {
+      // ✅ Voeg nieuw element toe in het midden van de lijst
+      const middleIndex = Math.floor(prevItems.length / 2);
+      return [...prevItems.slice(0, middleIndex), newItem, ...prevItems.slice(middleIndex)];
+    });
+  
     setShowModal(false);
   };
+  
   
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -151,3 +151,28 @@
     border: 1px solid #ccc; /* ✅ Dunne rand om iconen zichtbaar te maken */
 }
 
+/* Zorg dat de container de elementen centreert */
+.header-items-container {
+  display: flex;
+  justify-content: center; /* ✅ Zorgt ervoor dat alle elementen gecentreerd worden */
+  align-items: center; /* ✅ Houdt ze verticaal gecentreerd */
+  width: 100%;
+  gap: 10px; /* Voegt ruimte tussen items toe */
+}
+
+/* Zorg dat elk item in het midden blijft */
+.header-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✅ Zorgt dat de inhoud in het midden staat */
+  justify-content: center;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✅ Houdt alle items gecentreerd */
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+}
