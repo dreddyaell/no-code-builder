@@ -1,11 +1,17 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import Taskbar from "./Taskbar";
-import "./Header.css"; // Import CSS styles
+import headers from "./variants/headers" // ✅ Dynamische headers importeren
+console.log("⚠️ Gelaagde headers:", headers);
+console.log("⚠️ Beschikbare keys:", Object.keys(headers));
+
+import "./Header.css"; // ✅ Stijlen importeren
+
+// ✅ Automatische detectie van beschikbare headers
+const availableHeaders = Object.keys(headers);
 
 interface HeaderItem {
   id: string;
@@ -15,11 +21,17 @@ interface HeaderItem {
   height: number;
   fontSize: number;
   fontFamily: string;
-  textColor: string; // ✅ Nieuw veld toegevoegd voor tekstkleur
+  textColor: string;
 }
 
-
 export default function Header() {
+  const [selectedHeader, setSelectedHeader] = useState<string>("header1");
+  const HeaderComponent = headers[selectedHeader as keyof typeof headers];
+
+  if (!HeaderComponent) {
+  console.error(` Header "${selectedHeader}" bestaat niet!`);
+  }
+
   const [headerColor, setHeaderColor] = useState("#3b82f6");
   const [headerHeight, setHeaderHeight] = useState(80);
   const [headerItems, setHeaderItems] = useState<HeaderItem[]>([]);
@@ -31,28 +43,11 @@ export default function Header() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Arial");
-  const [textColor, setTextColor] = useState("#000000"); // Standaard zwart
+  const [textColor, setTextColor] = useState("#000000");
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HeaderItem | null>(null);
 
-  const openEditModal = (item: HeaderItem) => {
-    setSelectedItem(item);
-    setEditModalOpen(true);
-  };
-  
-  const updateSelectedItem = (field: keyof HeaderItem, value: any) => {
-    setSelectedItem((prev) => prev ? { ...prev, [field]: value } : null);
-  };
-  
-  const saveEditChanges = () => {
-    if (!selectedItem) return;
-    setHeaderItems((prevItems) =>
-      prevItems.map((item) => (item.id === selectedItem.id ? selectedItem : item))
-    );
-    setEditModalOpen(false);
-  };
-  
   useEffect(() => {
     setIsClient(true);
     const savedItems = JSON.parse(localStorage.getItem("headerItems") || "[]");
@@ -80,19 +75,34 @@ export default function Header() {
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
     if (section !== "header") return;
-
     setNewElementType(type);
     setShowModal(true);
     setNewContent("");
     setImagePreview(null);
-    setFontSize(16);
-    setFontFamily("Arial");
   };
+
+  const openEditModal = (item: HeaderItem) => {
+    setSelectedItem({ ...item }); // ✅ Kopie maken van item inclusief alle stijlen
+    setEditModalOpen(true);
+  };
+
+  const updateSelectedItem = (field: keyof HeaderItem, value: any) => {
+    setSelectedItem((prev) => (prev ? { ...prev, [field]: value } : null));
+  };
+  
+
+  const saveEditChanges = () => {
+    if (!selectedItem) return;
+    setHeaderItems((prevItems) =>
+      prevItems.map((item) => (item.id === selectedItem.id ? selectedItem : item))
+    );
+    setEditModalOpen(false);
+  };  
 
   const saveNewElement = () => {
     if (!newElementType) return;
     if (newElementType === "text" && newContent.trim() === "") return;
-  
+
     const newItem: HeaderItem = {
       id: generateId(),
       content: newElementType === "text" ? newContent : imagePreview || "https://via.placeholder.com/100",
@@ -104,16 +114,12 @@ export default function Header() {
       textColor: textColor,
     };
   
-    setHeaderItems((prevItems) => {
-      // ✅ Voeg nieuw element toe in het midden van de lijst
-      const middleIndex = Math.floor(prevItems.length / 2);
-      return [...prevItems.slice(0, middleIndex), newItem, ...prevItems.slice(middleIndex)];
-    });
-  
+    setHeaderItems((prevItems) => [...prevItems, newItem]);
     setShowModal(false);
+  
+    // ✅ Open direct de bewerk modal met het nieuwe item
+    openEditModal(newItem);
   };
-  
-  
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -129,13 +135,22 @@ export default function Header() {
 
   return (
     <header className="header-container" style={{ backgroundColor: headerColor, height: `${headerHeight}px` }}>
-      <Taskbar openModal={openModal} setHeaderColor={setHeaderColor} setHeaderHeight={setHeaderHeight} headerHeight={headerHeight} />
+      <Taskbar
+        openModal={openModal}
+        setHeaderColor={setHeaderColor}
+        setHeaderHeight={setHeaderHeight}
+        headerHeight={headerHeight}
+        selectedHeader={selectedHeader}
+        setSelectedHeader={setSelectedHeader}
+      />
+
+      <HeaderComponent />
 
       {isClient && (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={headerItems.map((item) => item.id)}>
             <div className="header-items-container">
-            {headerItems.map((item) => (
+              {headerItems.map((item) => (
                 <div key={item.id} className="header-item">
                   <SortableItem id={item.id}>
                     <div
@@ -151,25 +166,14 @@ export default function Header() {
                         justifyContent: "center",
                         textAlign: "center",
                         padding: "6px",
-                        border: "1px solid black",
-                        boxShadow: "2px 2px 5px rgba(0,0,0,0.2)",
                         backgroundColor: "white",
-                        wordWrap: "break-word",
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
                       }}
                     >
-                      {item.type === "text" ? (
-                        <span>{item.content}</span>
-                      ) : (
-                        <img src={item.content} alt="Uploaded" className="header-image" />
-                      )}
+                      {item.type === "text" ? <span>{item.content}</span> : <img src={item.content} alt="Uploaded" />}
                     </div>
                   </SortableItem>
-                  {/* ✅ Knop om tekst te bewerken */}
-                  {item.type === "text" && (
-                    <button onClick={() => openEditModal(item)} className="edit-button">✏️ Bewerken</button>
-                  )}
+
+                  <button onClick={() => openEditModal(item)} className="edit-button">✏️ Bewerken</button>
                   <button onClick={() => removeElement(item.id)} className="delete-button">❌</button>
                 </div>
               ))}
@@ -179,11 +183,11 @@ export default function Header() {
       )}
 
 {editModalOpen && selectedItem && (
-  <div className="modal">
-    <div className="modal-content">
-      <h2>🎨 Element Bewerken</h2>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded shadow-md w-96">
+      <h2 className="text-xl mb-4 text-black">🎨 Element Bewerken</h2>
 
-      {/* Breedte wijzigen */}
+      {/* 📏 Breedte wijzigen */}
       <label className="block text-sm text-black">📏 Breedte: {selectedItem.width}px</label>
       <input
         type="range"
@@ -194,7 +198,7 @@ export default function Header() {
         className="w-full"
       />
 
-      {/* Hoogte wijzigen */}
+      {/* 📏 Hoogte wijzigen */}
       <label className="block text-sm text-black mt-2">📏 Hoogte: {selectedItem.height}px</label>
       <input
         type="range"
@@ -205,7 +209,7 @@ export default function Header() {
         className="w-full"
       />
 
-      {/* Tekst wijzigen */}
+      {/* 📝 Tekst wijzigen */}
       <label className="block text-sm text-black mt-2">📝 Tekst:</label>
       <input
         type="text"
@@ -214,7 +218,7 @@ export default function Header() {
         className="w-full p-2 border rounded text-black"
       />
 
-      {/* Lettergrootte wijzigen */}
+      {/* 🔤 Lettergrootte wijzigen */}
       <label className="block text-sm text-black mt-2">🔤 Lettergrootte: {selectedItem.fontSize}px</label>
       <input
         type="range"
@@ -225,7 +229,7 @@ export default function Header() {
         className="w-full"
       />
 
-      {/* Lettertype wijzigen */}
+      {/* 🖋️ Lettertype wijzigen */}
       <label className="block text-sm text-black mt-2">🖋️ Lettertype:</label>
       <select
         value={selectedItem.fontFamily}
@@ -239,7 +243,7 @@ export default function Header() {
         <option value="Courier New">Courier New</option>
       </select>
 
-      {/* Tekstkleur wijzigen */}
+      {/* 🎨 Tekstkleur wijzigen */}
       <label className="block text-sm text-black mt-2">🎨 Tekstkleur:</label>
       <input
         type="color"
@@ -248,7 +252,7 @@ export default function Header() {
         className="w-full"
       />
 
-      {/* Sluiten en opslaan */}
+      {/* ✅ Opslaan en ❌ Annuleren */}
       <div className="flex justify-end gap-2 mt-4">
         <button onClick={() => setEditModalOpen(false)} className="p-2 bg-gray-500 text-white rounded">
           ❌ Annuleren
@@ -259,44 +263,41 @@ export default function Header() {
       </div>
     </div>
   </div>
-)}
-
+  )}
 
 {showModal && (
-  <div className="modal">
-    <div className="modal-content">
-      <h2>Nieuw Element Toevoegen</h2>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded shadow-md w-96 relative">
+      <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>
 
+      {/* Tekst invoer voor nieuw element */}
       {newElementType === "text" ? (
         <>
           <input
             type="text"
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
+            className="w-full p-2 border rounded text-black"
             placeholder="Voer tekst in"
           />
 
-          {/* 🔤 Lettergrootte */}
-          <label className="icon-label">
-            <img src="/icons/font-size.png" alt="Lettergrootte" />
-            Lettergrootte: {fontSize}px
-          </label>
+          {/* 🔤 Lettergrootte wijzigen */}
+          <label className="block text-sm text-black mt-2">🔤 Lettergrootte: {fontSize}px</label>
           <input
             type="range"
             min="10"
             max="50"
             value={fontSize}
             onChange={(e) => setFontSize(parseInt(e.target.value))}
+            className="w-full"
           />
 
-          {/* 🖋️ Lettertype */}
-          <label className="icon-label">
-            <img src="/icons/font-style.png" alt="Lettertype" />
-            Lettertype:
-          </label>
+          {/* 🖋️ Lettertype wijzigen */}
+          <label className="block text-sm text-black mt-2">🖋️ Lettertype:</label>
           <select
             value={fontFamily}
             onChange={(e) => setFontFamily(e.target.value)}
+            className="w-full bg-gray-200 text-black p-2 rounded"
           >
             <option value="Arial">Arial</option>
             <option value="Verdana">Verdana</option>
@@ -305,31 +306,57 @@ export default function Header() {
             <option value="Courier New">Courier New</option>
           </select>
 
-          {/* 🎨 Tekstkleur */}
-          <label className="icon-label">
-            <img src="/icons/color-picker.png" alt="Tekstkleur" />
-            Tekstkleur:
-          </label>
+          {/* 🎨 Tekstkleur wijzigen */}
+          <label className="block text-sm text-black mt-2">🎨 Tekstkleur:</label>
           <input
             type="color"
             value={textColor}
             onChange={(e) => setTextColor(e.target.value)}
+            className="w-full"
           />
         </>
       ) : (
-        <div>
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
-          {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+        // Afbeelding invoer
+        <div className="flex flex-col items-center">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mb-4"
+          />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="w-48 h-48 object-cover rounded"
+            />
+          )}
         </div>
       )}
 
-      <div className="buttons">
-        <button onClick={saveNewElement} className="save-button">Opslaan</button>
-        <button onClick={() => setShowModal(false)} className="cancel-button">Annuleren</button>
+      {/* Knoppen */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => setShowModal(false)}
+          className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+        >
+          Annuleren
+        </button>
+        <button
+          onClick={saveNewElement}
+          className={`p-2 rounded text-white ${
+            newElementType === "text" && newContent.trim() === ""
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700"
+          }`}
+          disabled={newElementType === "text" && newContent.trim() === ""}
+        >
+          Opslaan
+        </button>
       </div>
     </div>
-    </div>
-    )}
+  </div>
+  )}
   </header>
   );
 }

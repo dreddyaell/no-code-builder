@@ -12,6 +12,8 @@ interface TaskbarProps {
   setFooterColor?: (color: string) => void;
   setFooterHeight?: (height: number) => void;
   footerHeight?: number;
+  selectedHeader: string;
+  setSelectedHeader: (headerType: string) => void;
 }
 
 export default function Taskbar({
@@ -25,12 +27,28 @@ export default function Taskbar({
   setFooterColor,
   setFooterHeight,
   footerHeight,
+  selectedHeader,
+  setSelectedHeader,
 }: TaskbarProps) {
-  const [isOpen, setIsOpen] = useState(true); // Staat van de instellingenbalk
+  const [isOpen, setIsOpen] = useState(true); // ✅ Houdt de instellingenbalk open/dicht
+
+  // ✅ Dynamische lijst van headers (makkelijk uitbreidbaar)
+  const availableHeaders = [
+    "header1",
+    "header2",
+    "header3",
+    "header4",
+    "header5",
+    "header6",
+    "header7",
+    "header8",
+    "header9",
+    "header10",
+  ]; 
 
   return (
     <div className="fixed top-2 left-2 z-50">
-      {/* Toggle knop */}
+      {/* Toggle knop voor instellingenbalk */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 bg-gray-800 text-white rounded shadow-md mb-2"
@@ -38,13 +56,29 @@ export default function Taskbar({
         {isOpen ? "🔽 Sluiten" : "🔼 Instellingen"}
       </button>
 
-      {/* Instellingenbalk (zichtbaar of verborgen) */}
+      {/* Instellingenbalk */}
       {isOpen && (
         <div className="bg-gray-800 text-white p-3 rounded shadow-md">
           <h3 className="text-lg font-bold mb-2">Instellingen</h3>
 
+          {/* ✅ Dynamische Header Selectie */}
+          <div className="mt-2">
+            <label className="block text-sm">🖥️ Kies een Header:</label>
+            <select
+              value={selectedHeader}
+              onChange={(e) => setSelectedHeader(e.target.value)}
+              className="w-full bg-gray-700 text-white p-2 rounded"
+            >
+              {availableHeaders.map((header) => (
+                <option key={header} value={header}>
+                  {header.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Header Opties */}
-          <h4 className="font-semibold">📌 Header</h4>
+          <h4 className="font-semibold mt-4">📌 Header</h4>
           <button
             onClick={() => openModal("header", "text")}
             className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1"
@@ -60,13 +94,24 @@ export default function Taskbar({
           {setHeaderColor && (
             <div className="mt-2">
               <label className="block text-sm">🎨 Header Kleur:</label>
-              <input type="color" onChange={(e) => setHeaderColor(e.target.value)} className="w-full bg-transparent border-none" />
+              <input
+                type="color"
+                onChange={(e) => setHeaderColor(e.target.value)}
+                className="w-full bg-transparent border-none"
+              />
             </div>
           )}
           {setHeaderHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Header Hoogte: {headerHeight}px</label>
-              <input type="range" min="50" max="300" value={headerHeight} onChange={(e) => setHeaderHeight(parseInt(e.target.value))} className="w-full" />
+              <input
+                type="range"
+                min="50"
+                max="300"
+                value={headerHeight}
+                onChange={(e) => setHeaderHeight(parseInt(e.target.value))}
+                className="w-full"
+              />
             </div>
           )}
 
@@ -87,13 +132,24 @@ export default function Taskbar({
           {setBodyColor && (
             <div className="mt-2">
               <label className="block text-sm">🎨 Body Kleur:</label>
-              <input type="color" onChange={(e) => setBodyColor(e.target.value)} className="w-full bg-transparent border-none" />
+              <input
+                type="color"
+                onChange={(e) => setBodyColor(e.target.value)}
+                className="w-full bg-transparent border-none"
+              />
             </div>
           )}
           {setBodyHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Body Hoogte: {bodyHeight}px</label>
-              <input type="range" min="200" max="1000" value={bodyHeight} onChange={(e) => setBodyHeight(parseInt(e.target.value))} className="w-full" />
+              <input
+                type="range"
+                min="200"
+                max="1000"
+                value={bodyHeight}
+                onChange={(e) => setBodyHeight(parseInt(e.target.value))}
+                className="w-full"
+              />
             </div>
           )}
 
@@ -114,13 +170,24 @@ export default function Taskbar({
           {setFooterColor && (
             <div className="mt-2">
               <label className="block text-sm">🎨 Footer Kleur:</label>
-              <input type="color" onChange={(e) => setFooterColor(e.target.value)} className="w-full bg-transparent border-none" />
+              <input
+                type="color"
+                onChange={(e) => setFooterColor(e.target.value)}
+                className="w-full bg-transparent border-none"
+              />
             </div>
           )}
           {setFooterHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Footer Hoogte: {footerHeight}px</label>
-              <input type="range" min="50" max="300" value={footerHeight} onChange={(e) => setFooterHeight(parseInt(e.target.value))} className="w-full" />
+              <input
+                type="range"
+                min="50"
+                max="300"
+                value={footerHeight}
+                onChange={(e) => setFooterHeight(parseInt(e.target.value))}
+                className="w-full"
+              />
             </div>
           )}
         </div>
