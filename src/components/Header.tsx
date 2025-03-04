@@ -4,11 +4,11 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import Taskbar from "./Taskbar";
-import headers from "./variants/headers" // ✅ Dynamische headers importeren
+import headers from "./variants/headers"; // ✅ Dynamische headers importeren
+import "./Header.css"; // ✅ Stijlen importeren
+
 console.log("⚠️ Gelaagde headers:", headers);
 console.log("⚠️ Beschikbare keys:", Object.keys(headers));
-
-import "./Header.css"; // ✅ Stijlen importeren
 
 // ✅ Automatische detectie van beschikbare headers
 const availableHeaders = Object.keys(headers);
@@ -29,7 +29,7 @@ export default function Header() {
   const HeaderComponent = headers[selectedHeader as keyof typeof headers];
 
   if (!HeaderComponent) {
-  console.error(` Header "${selectedHeader}" bestaat niet!`);
+    console.error(`⚠️ Header "${selectedHeader}" bestaat niet!`);
   }
 
   const [headerColor, setHeaderColor] = useState("#3b82f6");
@@ -82,14 +82,13 @@ export default function Header() {
   };
 
   const openEditModal = (item: HeaderItem) => {
-    setSelectedItem({ ...item }); // ✅ Kopie maken van item inclusief alle stijlen
+    setSelectedItem({ ...item }); // ✅ Kopie maken van item inclusief stijlen
     setEditModalOpen(true);
   };
 
   const updateSelectedItem = (field: keyof HeaderItem, value: any) => {
     setSelectedItem((prev) => (prev ? { ...prev, [field]: value } : null));
   };
-  
 
   const saveEditChanges = () => {
     if (!selectedItem) return;
@@ -97,7 +96,7 @@ export default function Header() {
       prevItems.map((item) => (item.id === selectedItem.id ? selectedItem : item))
     );
     setEditModalOpen(false);
-  };  
+  };
 
   const saveNewElement = () => {
     if (!newElementType) return;
@@ -113,12 +112,10 @@ export default function Header() {
       fontFamily: fontFamily,
       textColor: textColor,
     };
-  
+
     setHeaderItems((prevItems) => [...prevItems, newItem]);
     setShowModal(false);
-  
-    // ✅ Open direct de bewerk modal met het nieuwe item
-    openEditModal(newItem);
+    
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,22 +150,17 @@ export default function Header() {
               {headerItems.map((item) => (
                 <div key={item.id} className="header-item">
                   <SortableItem id={item.id}>
-                    <div
-                      className="header-item-content"
+                    <div className="header-item-content"
                       style={{
                         width: `${item.width}px`,
                         height: `${item.height}px`,
                         fontSize: `${item.fontSize}px`,
                         fontFamily: item.fontFamily,
                         color: item.textColor,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
                         textAlign: "center",
                         padding: "6px",
                         backgroundColor: "white",
-                      }}
-                    >
+                      }}>
                       {item.type === "text" ? <span>{item.content}</span> : <img src={item.content} alt="Uploaded" />}
                     </div>
                   </SortableItem>
@@ -182,7 +174,7 @@ export default function Header() {
         </DndContext>
       )}
 
-{editModalOpen && selectedItem && (
+  {editModalOpen && selectedItem && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
     <div className="bg-white p-6 rounded shadow-md w-96">
       <h2 className="text-xl mb-4 text-black">🎨 Element Bewerken</h2>
@@ -265,7 +257,7 @@ export default function Header() {
   </div>
   )}
 
-{showModal && (
+  {showModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
     <div className="bg-white p-6 rounded shadow-md w-96 relative">
       <h2 className="text-xl mb-4 text-black">Nieuw Element Toevoegen</h2>

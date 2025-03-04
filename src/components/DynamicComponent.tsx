@@ -3,7 +3,7 @@ import Header2 from "./variants/headers/Header2";
 import Footer1 from "./variants/footers/Footer1";
 import Footer2 from "./variants/footers/Footer2";
 
-const componentMap: { [key: string]: React.FC } = {
+const componentMap: { [key: string]: React.FC<{ color?: string }> } = {
   "header1": Header1,
   "header2": Header2,
   "footer1": Footer1,
@@ -12,9 +12,10 @@ const componentMap: { [key: string]: React.FC } = {
 
 type DynamicComponentProps = {
   type: string;
+  color?: string;
 };
 
-export default function DynamicComponent({ type }: DynamicComponentProps) {
-  const Component = componentMap[type] || (() => <div>Component niet gevonden</div>);
-  return <Component />;
+export default function DynamicComponent({ type, color }: DynamicComponentProps) {
+  const Component = componentMap[type] || (() => <div>⚠️ Component niet gevonden</div>);
+  return <Component color={color} />;
 }

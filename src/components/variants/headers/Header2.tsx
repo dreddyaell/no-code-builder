@@ -1,8 +1,9 @@
 "use client";
-export default function Header2() {
-    return (
-      <header className="bg-gray-800 text-white p-4 text-center">
-        <h1>Header 2 - Donker Thema</h1>
-      </header>
-    );
-  }
+
+interface HeaderProps {
+  color?: string;
+}
+
+export default function Header2({ color = "black" }: HeaderProps) {
+  return <h1 style={{ color }}>Header 2</h1>;
+}

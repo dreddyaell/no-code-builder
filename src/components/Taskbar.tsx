@@ -44,7 +44,7 @@ export default function Taskbar({
     "header8",
     "header9",
     "header10",
-  ]; 
+  ];
 
   return (
     <div className="fixed top-2 left-2 z-50">
@@ -92,14 +92,14 @@ export default function Taskbar({
             🖼️ Afbeelding toevoegen
           </button>
           {setHeaderColor && (
-            <div className="mt-2">
-              <label className="block text-sm">🎨 Header Kleur:</label>
-              <input
-                type="color"
-                onChange={(e) => setHeaderColor(e.target.value)}
-                className="w-full bg-transparent border-none"
-              />
-            </div>
+          <div className="mt-2">
+          <label className="block text-sm">🎨 Header Kleur:</label>
+          <input
+            type="color"
+            onChange={(e) => setHeaderColor?.(e.target.value)}
+            className="w-full bg-transparent border-none"
+          />
+          </div>        
           )}
           {setHeaderHeight && (
             <div className="mt-2">

@@ -1,9 +1,9 @@
 "use client";
-export default function Header1() {
-    return (
-      <header className="bg-blue-500 text-white p-4 text-center">
-        <h1>Header 1 - Standaard Blauw</h1>
-      </header>
-    );
-  }
-  
+
+interface HeaderProps {
+  color?: string;
+}
+
+export default function Header1({ color = "black" }: HeaderProps) {
+  return <h1 style={{ color }}>Header 1</h1>;
+}

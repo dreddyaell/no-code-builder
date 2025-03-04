@@ -37,27 +37,3 @@ const headers: { [key: string]: React.FC } = {
 };
 
 export default headers;
-
-/* const headers = {
-    Header1: () => (
-      <header className="bg-blue-500 text-white p-4 text-center">
-        <h1>Header 1 - Standaard Blauw</h1>
-      </header>
-    ),
-    Header2: () => (
-      <header className="bg-gray-800 text-white p-4 text-center">
-        <h1>Header 2 - Donker Thema</h1>
-      </header>
-    ),
-    Header3: () => (
-      <header className="bg-green-500 text-white p-4 text-center">
-        <h1>Header 3 - Groen Thema</h1>
-      </header>
-    ),
-    Header4: () => (
-      <header className="bg-red-500 text-white p-4 text-center">
-        <h1>Header 4 - Rood Thema</h1>
-      </header>
-    ),
-  };
-  */

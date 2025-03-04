@@ -9,13 +9,18 @@ import Settings from "./Settings"; // ✅ Voeg de instellingencomponent toe
 export default function LayoutBuilder() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
 
+  // ✅ Stap 2: State voor individuele header instellingen
+  const [headerSettings, setHeaderSettings] = useState<{ [key: string]: { color: string, height: number } }>({
+    header1: { color: "#ffffff", height: 100 },
+    header2: { color: "#ff0000", height: 120 },
+    header3: { color: "#00ff00", height: 130 },
+  });
+
   const [layout, setLayout] = useState([
-    { id: "header", type: selectedHeader }, // ✅ Dynamische header
+    { id: "header", type: selectedHeader },
     { id: "body", type: "body" },
     { id: "footer1", type: "footer1" },
   ]);
-
-  
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -26,7 +31,22 @@ export default function LayoutBuilder() {
     }
   };
 
-  // ✅ Update de layout wanneer de header verandert
+  // ✅ Stap 2.1: Functies om de kleur en hoogte per header bij te werken
+  const setHeaderColor = (color: string) => {
+    setHeaderSettings((prev) => ({
+      ...prev,
+      [selectedHeader]: { ...prev[selectedHeader], color },
+    }));
+  };
+
+  const setHeaderHeight = (height: number) => {
+    setHeaderSettings((prev) => ({
+      ...prev,
+      [selectedHeader]: { ...prev[selectedHeader], height },
+    }));
+  };
+
+  // ✅ Stap 2.2: Update de layout wanneer de header verandert
   const handleHeaderChange = (newHeader: string) => {
     setSelectedHeader(newHeader);
     setLayout((prevLayout) =>
@@ -37,7 +57,13 @@ export default function LayoutBuilder() {
   return (
     <div className="flex flex-col space-y-4">
       {/* ✅ Instellingen sectie */}
-      <Settings selectedHeader={selectedHeader} setSelectedHeader={handleHeaderChange} />
+      <Settings
+        selectedHeader={selectedHeader}
+        setSelectedHeader={handleHeaderChange}
+        setHeaderColor={setHeaderColor}  // ✅ Doorsturen van de functie
+        setHeaderHeight={setHeaderHeight}  // ✅ Doorsturen van de functie
+        headerSettings={headerSettings}  // ✅ Doorsturen van de settings
+      />
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={layout.map(item => item.id)} strategy={verticalListSortingStrategy}>
