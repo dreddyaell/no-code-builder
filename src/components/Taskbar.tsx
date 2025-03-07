@@ -3,6 +3,8 @@ import { useState } from "react";
 
 interface TaskbarProps {
   openModal: (section: "header" | "body" | "footer", type: "text" | "image") => void;
+  selectedHeader: string;
+  setSelectedHeader: (headerType: string) => void;
   setHeaderColor?: (color: string) => void;
   setHeaderHeight?: (height: number) => void;
   headerHeight?: number;
@@ -12,12 +14,12 @@ interface TaskbarProps {
   setFooterColor?: (color: string) => void;
   setFooterHeight?: (height: number) => void;
   footerHeight?: number;
-  selectedHeader: string;
-  setSelectedHeader: (headerType: string) => void;
 }
 
 export default function Taskbar({
   openModal,
+  selectedHeader,
+  setSelectedHeader,
   setHeaderColor,
   setHeaderHeight,
   headerHeight,
@@ -27,8 +29,6 @@ export default function Taskbar({
   setFooterColor,
   setFooterHeight,
   footerHeight,
-  selectedHeader,
-  setSelectedHeader,
 }: TaskbarProps) {
   const [isOpen, setIsOpen] = useState(true); // ✅ Houdt de instellingenbalk open/dicht
 
@@ -58,8 +58,8 @@ export default function Taskbar({
 
       {/* Instellingenbalk */}
       {isOpen && (
-        <div className="bg-gray-800 text-white p-3 rounded shadow-md">
-          <h3 className="text-lg font-bold mb-2">Instellingen</h3>
+        <div className="bg-gray-800 text-white p-3 rounded shadow-md w-64">
+          <h3 className="text-lg font-bold mb-2">⚙️ Instellingen</h3>
 
           {/* ✅ Dynamische Header Selectie */}
           <div className="mt-2">
@@ -81,26 +81,28 @@ export default function Taskbar({
           <h4 className="font-semibold mt-4">📌 Header</h4>
           <button
             onClick={() => openModal("header", "text")}
-            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1"
+            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
           >
             ➕ Tekst toevoegen
           </button>
           <button
             onClick={() => openModal("header", "image")}
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1"
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
           >
             🖼️ Afbeelding toevoegen
           </button>
+
           {setHeaderColor && (
-          <div className="mt-2">
-          <label className="block text-sm">🎨 Header Kleur:</label>
-          <input
-            type="color"
-            onChange={(e) => setHeaderColor?.(e.target.value)}
-            className="w-full bg-transparent border-none"
-          />
-          </div>        
+            <div className="mt-2">
+              <label className="block text-sm">🎨 Header Kleur:</label>
+              <input
+                type="color"
+                onChange={(e) => setHeaderColor(e.target.value)}
+                className="w-full bg-transparent border-none"
+              />
+            </div>
           )}
+
           {setHeaderHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Header Hoogte: {headerHeight}px</label>
@@ -119,16 +121,17 @@ export default function Taskbar({
           <h4 className="font-semibold mt-4">📌 Body</h4>
           <button
             onClick={() => openModal("body", "text")}
-            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1"
+            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
           >
             ➕ Tekst toevoegen
           </button>
           <button
             onClick={() => openModal("body", "image")}
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1"
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
           >
             🖼️ Afbeelding toevoegen
           </button>
+
           {setBodyColor && (
             <div className="mt-2">
               <label className="block text-sm">🎨 Body Kleur:</label>
@@ -139,6 +142,7 @@ export default function Taskbar({
               />
             </div>
           )}
+
           {setBodyHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Body Hoogte: {bodyHeight}px</label>
@@ -157,16 +161,17 @@ export default function Taskbar({
           <h4 className="font-semibold mt-4">📌 Footer</h4>
           <button
             onClick={() => openModal("footer", "text")}
-            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1"
+            className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
           >
             ➕ Tekst toevoegen
           </button>
           <button
             onClick={() => openModal("footer", "image")}
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1"
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
           >
             🖼️ Afbeelding toevoegen
           </button>
+
           {setFooterColor && (
             <div className="mt-2">
               <label className="block text-sm">🎨 Footer Kleur:</label>
@@ -177,6 +182,7 @@ export default function Taskbar({
               />
             </div>
           )}
+
           {setFooterHeight && (
             <div className="mt-2">
               <label className="block text-sm">📏 Footer Hoogte: {footerHeight}px</label>

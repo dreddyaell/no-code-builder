@@ -1,15 +1,15 @@
 /* Overlay voor de modal */
 .modal {
     position: fixed;
-    inset: 0; /* Zorgt dat de modal altijd het hele scherm vult */
-    background: rgba(0, 0, 0, 0.5); /* Donkere overlay */
+    inset: 0; 
+    background: rgba(0, 0, 0, 0.5); 
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
   }
 
-/* Stijl voor de modal box */
+
 .modal-content {
     background: white;
     padding: 20px;
@@ -17,11 +17,11 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     min-width: 300px;
-    max-width: 400px; /* ✅ Zorg dat het een klein venster blijft */
+    max-width: 400px; 
     width: 90%;
     animation: fadeIn 0.2s ease-in-out;
   }
-/* Optionele fade-in animatie voor een mooi effect */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -33,7 +33,6 @@
   }
 }
 
-/* Stijlen voor de tekst in de modal */
 .modal-content h2 {
   color: #333;
   font-size: 18px;
@@ -49,20 +48,19 @@
   margin-top: 10px;
 }
 
-/* Input velden */
 .modal-content input[type="text"] {
     width: 100%;
     padding: 10px;
-    border: 2px solid #333; /* Donkere rand voor beter contrast */
+    border: 2px solid #333; 
     border-radius: 4px;
     font-size: 16px;
-    color: #000 !important; /* ✅ Zorg dat tekst altijd zwart is */
-    background: white !important; /* ✅ Zorg voor een witte achtergrond */
+    color: #000 !important; 
+    background: white !important; 
 }
 
 .modal-content input::placeholder {
-    color: #666 !important; /* ✅ Donkergrijs voor betere zichtbaarheid */
-    opacity: 1; /* ✅ Zorg ervoor dat de browser de opacity niet verlaagt */
+    color: #666 !important; 
+    opacity: 1; 
 }
 
 .modal-content input[type="range"] {
@@ -71,11 +69,11 @@
 }
 
 .modal-content input[type="text"]:focus {
-    border: 2px solid #007bff; /* ✅ Blauw accent bij selectie */
-    outline: none; /* ✅ Verwijdert standaard browser-outline */
+    border: 2px solid #007bff; 
+    outline: none; 
 }
 
-/* Knoppen uitlijnen */
+
 .modal-content .buttons {
   display: flex;
   justify-content: space-between;
@@ -120,58 +118,55 @@
     padding: 10px;
     font-size: 16px;
     border-radius: 4px;
-    border: 2px solid #333; /* ✅ Donkere rand voor beter contrast */
+    border: 2px solid #333; 
     background: white;
-    color: #000 !important; /* ✅ Zorg dat de tekst altijd zwart is */
-    opacity: 1 !important; /* ✅ Voorkom dat de dropdown gedimd wordt */
+    color: #000 !important; 
+    opacity: 1 !important; 
     cursor: pointer;
 }
 
 .modal-content select option {
     background: white;
-    color: black !important; /* ✅ Zwart voor goede leesbaarheid */
+    color: black !important; 
     padding: 10px;
 }
 
-/* Pictogrammen correct uitlijnen */
 .modal-content .icon-label {
     display: flex;
     align-items: center;
-    gap: 8px; /* ✅ Ruimte tussen pictogram en tekst */
+    gap: 8px; 
     font-size: 14px;
-    color: #333; /* ✅ Donkere tekst voor betere zichtbaarheid */
+    color: #333; 
     font-weight: bold;
 }
 
 .modal-content .icon-label img {
     width: 18px;
     height: 18px;
-    object-fit: contain; /* ✅ Zorg dat de afbeelding netjes blijft */
-    background: white; /* ✅ Zorg dat een kapotte afbeelding niet zwart wordt */
-    border: 1px solid #ccc; /* ✅ Dunne rand om iconen zichtbaar te maken */
+    object-fit: contain; 
+    background: white; 
+    border: 1px solid #ccc; 
 }
 
-/* Zorg dat de container de elementen centreert */
 .header-items-container {
   display: flex;
-  justify-content: center; /* ✅ Zorgt ervoor dat alle elementen gecentreerd worden */
-  align-items: center; /* ✅ Houdt ze verticaal gecentreerd */
+  justify-content: center; 
+  align-items: center; 
   width: 100%;
-  gap: 10px; /* Voegt ruimte tussen items toe */
+  gap: 10px; 
 }
 
-/* Zorg dat elk item in het midden blijft */
 .header-item {
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✅ Zorgt dat de inhoud in het midden staat */
+  align-items: center; 
   justify-content: center;
 }
 
 header {
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✅ Houdt alle items gecentreerd */
+  align-items: center; 
   justify-content: center;
   width: 100%;
   padding: 10px 0;
