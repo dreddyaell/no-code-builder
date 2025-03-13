@@ -11,6 +11,7 @@ export { default as Header9 } from "./Header9";
 export { default as Header10 } from "./Header10";*/
 
 // ✅ Importeer alle headers in een object
+import type { HeaderItem, HeaderProps } from "../../Header"; // ✅ Correcte import
 import Header1 from "./Header1";
 import Header2 from "./Header2";
 /*import Header3 from "./Header3";
@@ -22,11 +23,11 @@ import Header8 from "./Header8";
 import Header9 from "./Header9";
 import Header10 from "./Header10";*/
 
-// ✅ Maak een dynamisch object waarin alle headers zitten
-const headers: { [key: string]: React.FC } = {
+// ✅ Fix: Correcte type-definitie met `items` prop
+const headers: { [key: string]: React.FC<HeaderProps> } = {
   header1: Header1,
   header2: Header2,
- /* header3: Header3,
+  /* header3: Header3,
   header4: Header4,
   header5: Header5,
   header6: Header6,

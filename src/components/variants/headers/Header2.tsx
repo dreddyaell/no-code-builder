@@ -1,9 +1,14 @@
-"use client";
+import React from "react";
+import { HeaderProps } from "../../Header";
 
-interface HeaderProps {
-  color?: string;
-}
+const Header1: React.FC<HeaderProps> = ({ items = [] }) => {
+  return (
+    <header>
+      {items.map((item) => (
+        <div key={item.id}>{item.content}</div>
+      ))}
+    </header>
+  );
+};
 
-export default function Header2({ color = "black" }: HeaderProps) {
-  return <h1 style={{ color }}>Header 2</h1>;
-}
+export default Header1;

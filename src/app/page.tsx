@@ -1,20 +1,26 @@
+"use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import LayoutBuilder from "@/components/LayoutBuilder";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [selectedHeader, setSelectedHeader] = useState<string>("header1");
+
+  useEffect(() => {
+    const savedHeader = localStorage.getItem("selectedHeader") || "header1";
+    setSelectedHeader(savedHeader);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* ✅ Full-width Header met grid-based elementen */}
-      <Header />
+      {/* ✅ Corrigeer Header props */}
+      <Header selectedHeader={selectedHeader} setSelectedHeader={setSelectedHeader} />
 
-      {/* ✅ Main Content */}
-      <main className="flex-grow flex flex-col items-center justify-center p-8 gap-8 mt-20">
+      <main className="flex-grow flex flex-col items-center justify-center p-8 gap-8">
         <h1 className="text-2xl font-bold">🚀 No-Code Website Builder</h1>
-        <LayoutBuilder />
       </main>
 
-      {/* ✅ Full-width Footer met grid-based elementen */}
+      {/* ✅ Geen className probleem meer */}
       <Footer />
     </div>
   );

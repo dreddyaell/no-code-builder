@@ -171,3 +171,36 @@ header {
   width: 100%;
   padding: 10px 0;
 }
+
+
+.header-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.taskbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ccc;
+}
+
+.taskbar-label {
+  font-size: 14px;
+}
+
+.header-full-width {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

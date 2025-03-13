@@ -33,18 +33,7 @@ export default function Taskbar({
   const [isOpen, setIsOpen] = useState(true); // ✅ Houdt de instellingenbalk open/dicht
 
   // ✅ Dynamische lijst van headers (makkelijk uitbreidbaar)
-  const availableHeaders = [
-    "header1",
-    "header2",
-    "header3",
-    "header4",
-    "header5",
-    "header6",
-    "header7",
-    "header8",
-    "header9",
-    "header10",
-  ];
+  const availableHeaders = ["header1", "header2", "header3", "header4"];
 
   return (
     <div className="fixed top-2 left-2 z-50">
@@ -61,8 +50,8 @@ export default function Taskbar({
         <div className="bg-gray-800 text-white p-3 rounded shadow-md w-64">
           <h3 className="text-lg font-bold mb-2">⚙️ Instellingen</h3>
 
-          {/* ✅ Dynamische Header Selectie */}
-          <div className="mt-2">
+          {/* 🖥️ Header Selectie */}
+          <div className="mb-4">
             <label className="block text-sm">🖥️ Kies een Header:</label>
             <select
               value={selectedHeader}
@@ -77,16 +66,16 @@ export default function Taskbar({
             </select>
           </div>
 
-          {/* Header Opties */}
-          <h4 className="font-semibold mt-4">📌 Header</h4>
+        {/* 📌 Dynamische Header Opties */}
+          <h4 className="font-semibold mt-4">📌 {selectedHeader.toUpperCase()}</h4>
           <button
-            onClick={() => openModal("header", "text")}
+            onClick={() => openModal(selectedHeader as "header", "text")}
             className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
           >
             ➕ Tekst toevoegen
           </button>
           <button
-            onClick={() => openModal("header", "image")}
+            onClick={() => openModal(selectedHeader as "header", "image")}
             className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
           >
             🖼️ Afbeelding toevoegen
@@ -117,7 +106,7 @@ export default function Taskbar({
             </div>
           )}
 
-          {/* Body Opties */}
+          {/* 📌 Body Opties */}
           <h4 className="font-semibold mt-4">📌 Body</h4>
           <button
             onClick={() => openModal("body", "text")}
@@ -157,7 +146,7 @@ export default function Taskbar({
             </div>
           )}
 
-          {/* Footer Opties */}
+          {/* 📌 Footer Opties */}
           <h4 className="font-semibold mt-4">📌 Footer</h4>
           <button
             onClick={() => openModal("footer", "text")}
