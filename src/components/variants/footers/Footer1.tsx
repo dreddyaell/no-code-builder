@@ -1,8 +1,17 @@
 "use client";
-export default function Footer1() {
-    return (
-      <footer className="bg-blue-500 text-white p-4 text-center">
-        <p>Footer 1 - Standaard Blauw</p>
-      </footer>
-    );
-  }
+import { FooterProps } from "../types"; // ✅ Zorg ervoor dat dit correct is geïmporteerd
+import styles from "./Footer1.module.css";
+
+export default function Footer1({ items }: FooterProps) {
+  return (
+    <footer className={styles.footerContainer}>
+      <div className={styles.footerContent}>
+        {items.map((item) => (
+          <div key={item.id} className={styles.footerItem}>
+            {item.content}
+          </div>
+        ))}
+      </div>
+    </footer>
+  );
+}

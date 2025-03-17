@@ -1,0 +1,48 @@
+.bodyContainer {
+    width: 100%;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  /* ✅ Introductie sectie */
+  .introSection {
+    margin-bottom: 40px;
+  }
+  
+  .heading {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .subtext {
+    font-size: 18px;
+    color: #555;
+  }
+  
+  /* ✅ Grid layout voor features */
+  .featureGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+  
+  .featureCard {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+  }
+  
+  .featureCard h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .featureCard p {
+    font-size: 16px;
+    color: #666;
+  }
+  

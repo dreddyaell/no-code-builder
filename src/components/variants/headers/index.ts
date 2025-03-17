@@ -11,7 +11,7 @@ export { default as Header9 } from "./Header9";
 export { default as Header10 } from "./Header10";*/
 
 // ✅ Importeer alle headers in een object
-import type { HeaderItem, HeaderProps } from "../../Header"; // ✅ Correcte import
+import { HeaderProps } from "../types"; // ✅ Correcte import
 import Header1 from "./Header1";
 import Header2 from "./Header2";
 /*import Header3 from "./Header3";

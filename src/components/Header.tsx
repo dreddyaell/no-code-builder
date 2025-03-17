@@ -22,11 +22,14 @@ interface HeaderItem {
 interface HeaderProps {
   selectedHeader: string;
   setSelectedHeader: (headerType: string) => void;
-  items?: HeaderItem[]; // ✅ Voeg items toe om de fout te voorkomen
+  isOpen: boolean; // ✅ Ontvangt isOpen van page.tsx
+  setIsOpen: (open: boolean) => void; // ✅ Ontvangt setIsOpen van page.tsx
+  openModal: (section: "header" | "body" | "footer", type: "text" | "image") => void;
 }
 
-export default function Header({ selectedHeader, setSelectedHeader }: HeaderProps) {
+export default function Header({ selectedHeader, setSelectedHeader, isOpen, setIsOpen }: HeaderProps) {
   const HeaderComponent = headers[selectedHeader] || null;
+  const [navItems, setNavItems] = useState([]);
   const [headerItems, setHeaderItems] = useState<{ [key: string]: HeaderItem[] }>({});
   const [headerColor, setHeaderColor] = useState("#3b82f6");
   const [headerHeight, setHeaderHeight] = useState(80);
@@ -45,15 +48,17 @@ export default function Header({ selectedHeader, setSelectedHeader }: HeaderProp
 
   useEffect(() => {
     setIsClient(true);
-    const savedItems = JSON.parse(localStorage.getItem("headerItems") || "{}") as { [key: string]: HeaderItem[] };
-    setHeaderItems(savedItems);
-  }, []);
+
+    // ✅ Laad unieke items per header, niet globaal
+    const savedItems = JSON.parse(localStorage.getItem(`headerItems-${selectedHeader}`) || "[]");
+    setHeaderItems((prev) => ({ ...prev, [selectedHeader]: savedItems }));
+  }, [selectedHeader]);
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("headerItems", JSON.stringify(headerItems));
+      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(headerItems[selectedHeader] || []));
     }
-  }, [headerItems, isClient]);
+  }, [headerItems, selectedHeader, isClient]);
 
   const generateId = () => `item-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
@@ -141,20 +146,21 @@ export default function Header({ selectedHeader, setSelectedHeader }: HeaderProp
   };
 
   return (
-     <header className="header-container" style={{ backgroundColor: headerColor, height: `${headerHeight}px` }}>
+    <header className="header-container" style={{ backgroundColor: headerColor, height: `${headerHeight}px` }}>
       <Taskbar
-        openModal={() => saveNewElement("text")}
+        isOpen={isOpen} // ✅ Correct doorgegeven
+        setIsOpen={setIsOpen} // ✅ Correct doorgegeven
+        openModal={openModal} // ✅ Correct doorgegeven
+        selectedHeader={selectedHeader}
+        setSelectedHeader={setSelectedHeader}
         setHeaderColor={setHeaderColor}
         setHeaderHeight={setHeaderHeight}
         headerHeight={headerHeight}
-        selectedHeader={selectedHeader}
-        setSelectedHeader={setSelectedHeader}
       />
 
-
 <div className="header-full-width">
-  {HeaderComponent && <HeaderComponent selectedHeader={selectedHeader} setSelectedHeader={setSelectedHeader} />}
-</div>
+        {HeaderComponent ? <HeaderComponent items={[]} /> : <p>Geen header geselecteerd</p>}
+      </div>
 
 
         {isClient && (

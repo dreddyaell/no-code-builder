@@ -1,44 +1,60 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { HeaderProps } from "../types"; // ✅ Zorg ervoor dat dit correct is geïmporteerd
 import styles from "./Header1.module.css";
-import { HeaderProps } from "../../Header"; // ✅ Importeer de juiste props
 
-const Header1: React.FC<HeaderProps> = ({ items = [] }) => {
+export default function Header1({ items }: HeaderProps) {
   return (
-    <div className={styles.headerContent}>
-      <div className={styles.logoContainer}>
-        <Image src="/logo.png" alt="Logo" width={80} height={40} />
+    <header className={styles.headerContainer}>
+      {/* ✅ Bovenste sectie met extra links en taalopties */}
+      <div className={styles.topNav}>
+        <div className={styles.leftLinks}>
+          <a href="#">Downloads</a>
+          <a href="#">Nieuws</a>
+          <a href="#">Evenementen</a>
+        </div>
+        <div className={styles.rightLinks}>
+          <div className={styles.languageSwitcher}>
+            <Image src="/icons/nl-flag.png" alt="NL" width={18} height={12} />
+            <span>NL</span>
+          </div>
+          <a href="#">Extranet</a>
+          <a href="#">WinWeb</a>
+          <a href="#">Partner-portaal</a>
+        </div>
       </div>
 
-      {/* ✅ Dynamische navigatie-items */}
-      <nav className={styles.nav}>
-        {items.map((item) => (
-          <a
-            key={item.id}
-            href="#"
-            className={styles.navLink}
-            style={{
-              fontSize: `${item.fontSize}px`,
-              fontFamily: item.fontFamily,
-              color: item.textColor,
-            }}
-          >
-            {item.content}
-          </a>
-        ))}
-      </nav>
+      {/* ✅ Hoofd Header met Logo en Navigatie */}
+      <div className={styles.mainHeader}>
+        <div className={styles.logoContainer}>
+          <Image src="/logo.png" alt="Logo" width={120} height={80} />
+        </div>
 
-      <div className={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="Zoek op trefwoord..."
-          className={styles.searchInput}
-        />
-        <button className={styles.searchButton}>🔍</button>
-        <span className={styles.languageSwitcher}>🌐 NL | Extranet</span>
+        {/* ✅ Navigatiebalk */}
+        <nav className={styles.nav}>
+          {items.map((item) => (
+            <a
+              key={item.id}
+              href="#"
+              className={styles.navLink}
+              style={{
+                fontSize: `${item.fontSize}px`,
+                fontFamily: item.fontFamily,
+                color: item.textColor,
+              }}
+            >
+              {item.content}
+            </a>
+          ))}
+        </nav>
+
+        {/* ✅ Zoekbalk */}
+        <div className={styles.searchContainer}>
+          <input type="text" placeholder="Zoek op trefwoord" className={styles.searchInput} />
+          <button className={styles.searchButton}>🔍</button>
+        </div>
       </div>
-    </div>
+    </header>
   );
-};
-
-export default Header1;
+}
