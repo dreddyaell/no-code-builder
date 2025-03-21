@@ -1,17 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import headers from "@/components/variants/headers";
 import footers from "@/components/variants/footers";
-import Footer from "@/components/Footer";
-import Taskbar from "@/components/Taskbar";
 import Header from "@/components/Header";
+import Taskbar from "@/components/Taskbar";
 import Body from "@/components/Body";
+import { FooterItem } from "@/components/variants/types";
 
 export default function Home() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
   const [selectedFooter, setSelectedFooter] = useState("footer1");
   const [headerItems, setHeaderItems] = useState<{ [key: string]: any[] }>({});
-  const [isTaskbarOpen, setIsTaskbarOpen] = useState(true); // ✅ State voor Taskbar
+  const [footerItems, setFooterItems] = useState<{ [key: string]: FooterItem[] }>({});
+  const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
@@ -19,29 +21,39 @@ export default function Home() {
     setSelectedHeader(savedHeader);
     setSelectedFooter(savedFooter);
 
-    const savedItems = JSON.parse(localStorage.getItem(`headerItems-${savedHeader}`) || "[]");
-    setHeaderItems((prev) => ({ ...prev, [savedHeader]: savedItems }));
+    const savedHeaderItems = JSON.parse(localStorage.getItem(`headerItems-${savedHeader}`) || "[]");
+    const savedFooterItems = JSON.parse(localStorage.getItem(`footerItems-${savedFooter}`) || "[]");
+
+    setHeaderItems((prev) => ({ ...prev, [savedHeader]: savedHeaderItems }));
+    setFooterItems((prev) => ({ ...prev, [savedFooter]: savedFooterItems }));
   }, []);
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
+    const newItem = {
+      id: `item-${Date.now()}`,
+      content: type === "text" ? "Nieuw Tekstelement" : "https://via.placeholder.com/100",
+      type,
+      width: 200,
+      height: section === "footer" ? 40 : 60,
+      fontSize: section === "footer" ? 14 : 16,
+      fontFamily: "Arial",
+      textColor: "#000000",
+    };
+
     if (section === "header") {
-      const newItem = {
-        id: `item-${Date.now()}`,
-        content: type === "text" ? "Nieuw Tekstelement" : "https://via.placeholder.com/100",
-        type,
-        width: 200,
-        height: 60,
-        fontSize: 16,
-        fontFamily: "Arial",
-        textColor: "#000000",
-      };
+      setHeaderItems((prev) => {
+        const updated = [...(prev[selectedHeader] || []), newItem];
+        localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+        return { ...prev, [selectedHeader]: updated };
+      });
+    }
 
-      setHeaderItems((prev) => ({
-        ...prev,
-        [selectedHeader]: [...(prev[selectedHeader] || []), newItem],
-      }));
-
-      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify([...headerItems[selectedHeader] || [], newItem]));
+    if (section === "footer") {
+      setFooterItems((prev) => {
+        const updated = [...(prev[selectedFooter] || []), newItem];
+        localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
+        return { ...prev, [selectedFooter]: updated };
+      });
     }
   };
 
@@ -50,21 +62,37 @@ export default function Home() {
 
   return (
     <div className="pageContainer">
+      {/* ⚙️ Instellingenbalk */}
+      <Taskbar
+        isOpen={isTaskbarOpen}
+        setIsOpen={setIsTaskbarOpen}
+        openModal={openModal}
+        selectedHeader={selectedHeader}
+        setSelectedHeader={(header) => {
+          setSelectedHeader(header);
+          localStorage.setItem("selectedHeader", header);
+        }}
+        selectedFooter={selectedFooter}
+        setSelectedFooter={(footer) => {
+          setSelectedFooter(footer);
+          localStorage.setItem("selectedFooter", footer);
+        }}
+      />
+
+      {/* 🧠 Header */}
       <Header
         selectedHeader={selectedHeader}
         setSelectedHeader={setSelectedHeader}
-        isOpen={isTaskbarOpen} // ✅ Doorsturen naar Header
-        setIsOpen={setIsTaskbarOpen} // ✅ Doorsturen naar Header
-        openModal={openModal} // ✅ Nu correct doorgegeven
+        isOpen={isTaskbarOpen}
+        setIsOpen={setIsTaskbarOpen}
+        openModal={openModal}
       />
+
+      {/* 📦 Body */}
       <Body />
-      <FooterComponent
-        items={[
-          { id: "copyright", content: "© 2025 No-Code Builder" },
-          { id: "socials", content: "📱 Social Media Links" },
-          { id: "contact", content: "📧 Contactgegevens" },
-        ]}
-      />
+
+      {/* 🔻 Footer (net als Header, met props!) */}
+      <FooterComponent items={footerItems[selectedFooter] || []} />
     </div>
   );
 }
