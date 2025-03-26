@@ -61,8 +61,7 @@ export default function Home() {
   const FooterComponent = footers[selectedFooter] || footers["footer1"];
 
   return (
-    <div className="pageContainer">
-      {/* ⚙️ Instellingenbalk */}
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Taskbar
         isOpen={isTaskbarOpen}
         setIsOpen={setIsTaskbarOpen}
@@ -79,7 +78,6 @@ export default function Home() {
         }}
       />
 
-      {/* 🧠 Header */}
       <Header
         selectedHeader={selectedHeader}
         setSelectedHeader={setSelectedHeader}
@@ -88,11 +86,13 @@ export default function Home() {
         openModal={openModal}
       />
 
-      {/* 📦 Body */}
-      <Body />
+      <main className="flex-grow">
+        <Body />
+      </main>
 
-      {/* 🔻 Footer (net als Header, met props!) */}
-      <FooterComponent items={footerItems[selectedFooter] || []} />
+      <footer>
+        <FooterComponent items={footerItems[selectedFooter] || []} />
+      </footer>
     </div>
   );
 }
