@@ -18,6 +18,8 @@ interface TaskbarProps {
   setFooterColor?: (color: string) => void;
   setFooterHeight?: (height: number) => void;
   footerHeight?: number;
+  logoUrl?: string;
+  setLogoUrl?: (url: string) => void;
 }
 
 export default function Taskbar({
@@ -37,6 +39,8 @@ export default function Taskbar({
   setFooterColor,
   setFooterHeight,
   footerHeight,
+  logoUrl,           
+  setLogoUrl,      
 }: TaskbarProps) {
   const availableHeaders = ["header1", "header2", "header3", "header4"];
   const availableFooters = ["footer1", "footer2", "footer3"];
@@ -99,6 +103,41 @@ export default function Taskbar({
             />
           </div>
         )}
+
+{setLogoUrl && (
+  <div className="mt-4">
+    <label className="block text-sm mb-1">🖼️ Logo:</label>
+
+    {/* 🔹 URL invoer */}
+    <input
+      type="text"
+      defaultValue={logoUrl}
+      onBlur={(e) => setLogoUrl(e.target.value)}
+      placeholder="Plak een logo-URL..."
+      className="w-full p-2 mb-2 rounded bg-gray-700 text-white"
+    />
+
+    {/* 🔹 Bestand upload */}
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (reader.result) {
+              setLogoUrl(reader.result as string); // base64 afbeelding
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      }}
+      className="w-full text-sm bg-gray-800 text-white file:bg-gray-600 file:border-0 file:rounded file:px-3 file:py-1 file:cursor-pointer"
+    />
+  </div>
+)}
+
 
         {setHeaderHeight && (
           <div className="mt-2">

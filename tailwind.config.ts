@@ -6,6 +6,11 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  extend: {
+    fontFamily: {
+      sans: ['"Segoe UI"', "Roboto", "Arial", "sans-serif"],
+    },
+  },  
   theme: {
     extend: {
       colors: {

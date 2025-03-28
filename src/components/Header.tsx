@@ -1,4 +1,33 @@
 "use client";
+
+import headers from "@/components/variants/headers";
+import { HeaderItem } from "@/components/variants/types";
+
+export interface HeaderProps {
+  selectedHeader: string;
+  items: HeaderItem[];
+  logoUrl?: string;
+  setLogoUrl?: (url: string) => void;
+}
+
+export default function Header({
+  selectedHeader,
+  items,
+  logoUrl,
+  setLogoUrl,
+}: HeaderProps) {
+  const HeaderComponent = headers[selectedHeader] || headers["header1"];
+
+  return (
+    <HeaderComponent
+      items={items}
+      logoUrl={logoUrl}
+      setLogoUrl={setLogoUrl}
+    />
+  );
+}
+
+/*"use client";
 import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
@@ -22,9 +51,11 @@ interface HeaderItem {
 interface HeaderProps {
   selectedHeader: string;
   setSelectedHeader: (headerType: string) => void;
-  isOpen: boolean; // ✅ Ontvangt isOpen van page.tsx
-  setIsOpen: (open: boolean) => void; // ✅ Ontvangt setIsOpen van page.tsx
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   openModal: (section: "header" | "body" | "footer", type: "text" | "image") => void;
+  logoUrl?: string;
+  setLogoUrl?: (url: string) => void;
 }
 
 export default function Header({ selectedHeader, setSelectedHeader, isOpen, setIsOpen }: HeaderProps) {
@@ -45,6 +76,8 @@ export default function Header({ selectedHeader, setSelectedHeader, isOpen, setI
   const [textColor, setTextColor] = useState("#000000");
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HeaderItem | null>(null);
+  const [logoUrl, setLogoUrl] = useState("/logo.png");
+  
 
   useEffect(() => {
     setIsClient(true);
@@ -159,7 +192,9 @@ export default function Header({ selectedHeader, setSelectedHeader, isOpen, setI
       />
 
 <div className="header-full-width">
-        {HeaderComponent ? <HeaderComponent items={[]} /> : <p>Geen header geselecteerd</p>}
+    <HeaderComponent items={headerItems[selectedHeader] || []} logoUrl={logoUrl} setLogoUrl={setLogoUrl} />
+  
+
       </div>
 
 
@@ -191,12 +226,12 @@ export default function Header({ selectedHeader, setSelectedHeader, isOpen, setI
                     </div>
                   </SortableItem>
         
-                  {/* ✏️ Bewerkknop */}
+               
                   <button onClick={() => openEditModal(item)} className="p-1 bg-yellow-500 text-white rounded">
                     ✏️ Bewerken
                   </button>
         
-                  {/* ❌ Verwijderknop */}
+      
                   <button onClick={() => removeElement(item.id)} className="p-1 bg-red-500 text-white rounded">
                     ❌ Verwijderen
                   </button>
@@ -357,4 +392,4 @@ export default function Header({ selectedHeader, setSelectedHeader, isOpen, setI
       )}
     </header>
   );
-}
+}*/

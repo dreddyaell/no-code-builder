@@ -1,32 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import headers from "@/components/variants/headers";
 import footers from "@/components/variants/footers";
-import Header from "@/components/Header";
 import Taskbar from "@/components/Taskbar";
 import Body from "@/components/Body";
-import { FooterItem } from "@/components/variants/types";
+import LayoutBuilder from "@/components/LayoutBuilder";
+import { FooterItem, HeaderItem } from "@/components/variants/types";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
   const [selectedFooter, setSelectedFooter] = useState("footer1");
-  const [headerItems, setHeaderItems] = useState<{ [key: string]: any[] }>({});
+
+  const [headerItems, setHeaderItems] = useState<{ [key: string]: HeaderItem[] }>({});
   const [footerItems, setFooterItems] = useState<{ [key: string]: FooterItem[] }>({});
+
   const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
+  const [logoUrl, setLogoUrl] = useState("/logo.png");
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
+    const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
+  
     setSelectedHeader(savedHeader);
     setSelectedFooter(savedFooter);
-
+    setLogoUrl(savedLogo);
+  
     const savedHeaderItems = JSON.parse(localStorage.getItem(`headerItems-${savedHeader}`) || "[]");
     const savedFooterItems = JSON.parse(localStorage.getItem(`footerItems-${savedFooter}`) || "[]");
-
-    setHeaderItems((prev) => ({ ...prev, [savedHeader]: savedHeaderItems }));
-    setFooterItems((prev) => ({ ...prev, [savedFooter]: savedFooterItems }));
+  
+    setHeaderItems({ [savedHeader]: savedHeaderItems });
+    setFooterItems({ [savedFooter]: savedFooterItems });
   }, []);
+  
+
+  useEffect(() => {
+    localStorage.setItem("logoUrl", logoUrl);
+  }, [logoUrl]);
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
     const newItem = {
@@ -40,14 +51,6 @@ export default function Home() {
       textColor: "#000000",
     };
 
-    if (section === "header") {
-      setHeaderItems((prev) => {
-        const updated = [...(prev[selectedHeader] || []), newItem];
-        localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
-        return { ...prev, [selectedHeader]: updated };
-      });
-    }
-
     if (section === "footer") {
       setFooterItems((prev) => {
         const updated = [...(prev[selectedFooter] || []), newItem];
@@ -55,10 +58,17 @@ export default function Home() {
         return { ...prev, [selectedFooter]: updated };
       });
     }
+
+    if (section === "header") {
+      setHeaderItems((prev) => {
+        const updated = [...(prev[selectedHeader] || []), newItem];
+        localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+        return { ...prev, [selectedHeader]: updated };
+      });
+    }
   };
 
-  const HeaderComponent = headers[selectedHeader] || headers["header1"];
-  const FooterComponent = footers[selectedFooter] || footers["footer1"];
+  const FooterComponent = footers[selectedFooter];
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -76,17 +86,25 @@ export default function Home() {
           setSelectedFooter(footer);
           localStorage.setItem("selectedFooter", footer);
         }}
+        logoUrl={logoUrl}
+        setLogoUrl={setLogoUrl}
       />
 
-      <Header
-        selectedHeader={selectedHeader}
-        setSelectedHeader={setSelectedHeader}
-        isOpen={isTaskbarOpen}
-        setIsOpen={setIsTaskbarOpen}
-        openModal={openModal}
-      />
+      
 
       <main className="flex-grow">
+      <LayoutBuilder
+  selectedHeader={selectedHeader}
+  logoUrl={logoUrl}
+  setLogoUrl={setLogoUrl}
+  headerItems={headerItems[selectedHeader] || []}
+  setHeaderItems={setHeaderItems}
+  selectedFooter={selectedFooter}
+  footerItems={footerItems[selectedFooter] || []}
+  setFooterItems={setFooterItems}
+  // eventueel ook: editModal props etc...
+
+        />
         <Body />
       </main>
 

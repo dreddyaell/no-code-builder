@@ -4,6 +4,9 @@ export interface HeaderItem {
   fontSize: number;
   fontFamily: string;
   textColor: string;
+  type: "text" | "image";
+  width: number;
+  height: number;
 }
 
 export interface FooterItem {
@@ -19,6 +22,8 @@ export interface FooterItem {
 
 export interface HeaderProps {
   items: HeaderItem[];
+  logoUrl?: string;
+  setLogoUrl?: (url: string) => void;
 }
 
 export interface FooterProps {
