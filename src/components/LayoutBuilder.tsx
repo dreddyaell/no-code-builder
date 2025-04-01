@@ -1,9 +1,7 @@
 "use client";
 
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { useState } from "react";
-import SortableItem from "@/components/SortableItem";
+import { useEffect, useState } from "react";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { HeaderItem, FooterItem } from "@/components/variants/types";
 import headers from "@/components/variants/headers";
 
@@ -32,18 +30,24 @@ export default function LayoutBuilder({
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HeaderItem | null>(null);
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
+  useEffect(() => {
+    const saved = localStorage.getItem(`headerItems-${selectedHeader}`);
+    if (saved) {
+      setHeaderItems((prev) => ({
+        ...prev,
+        [selectedHeader]: JSON.parse(saved),
+      }));
+    }
+  }, [selectedHeader]);
 
-    setHeaderItems((prev) => ({
-      ...prev,
-      [selectedHeader]: arrayMove(
-        prev[selectedHeader] || [],
-        prev[selectedHeader].findIndex((i: HeaderItem) => i.id === active.id),
-        prev[selectedHeader].findIndex((i: HeaderItem) => i.id === over.id)
-      ),
-    }));
+  const updateItemPosition = (id: string, x: number, y: number) => {
+    setHeaderItems((prev) => {
+      const updated = (prev[selectedHeader] || []).map((item) =>
+        item.id === id ? { ...item, x, y } : item
+      );
+      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+      return { ...prev, [selectedHeader]: updated };
+    });
   };
 
   const openEditModal = (item: HeaderItem) => {
@@ -57,29 +61,44 @@ export default function LayoutBuilder({
 
   const saveEditChanges = () => {
     if (!selectedItem) return;
-    setHeaderItems((prevItems) => ({
-      ...prevItems,
-      [selectedHeader]: prevItems[selectedHeader]?.map((item) =>
+
+    setHeaderItems((prevItems) => {
+      const updatedItems = prevItems[selectedHeader]?.map((item) =>
         item.id === selectedItem.id ? selectedItem : item
-      ) || [],
-    }));
+      ) || [];
+
+      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updatedItems));
+
+      return {
+        ...prevItems,
+        [selectedHeader]: updatedItems,
+      };
+    });
+
     setEditModalOpen(false);
   };
 
   const removeElement = (id: string) => {
-    setHeaderItems((prev) => ({
-      ...prev,
-      [selectedHeader]: prev[selectedHeader]?.filter((item) => item.id !== id) || [],
-    }));
+    setHeaderItems((prev) => {
+      const updated = prev[selectedHeader]?.filter((item) => item.id !== id) || [];
+      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+      return {
+        ...prev,
+        [selectedHeader]: updated,
+      };
+    });
   };
 
   return (
     <div className="w-full">
       {HeaderComponent && (
         <HeaderComponent
+          items={headerItems}
           logoUrl={logoUrl}
           setLogoUrl={setLogoUrl}
-          items={headerItems}
+          onEdit={openEditModal}
+          onDelete={removeElement}
+          updateItemPosition={updateItemPosition}
         />
       )}
 

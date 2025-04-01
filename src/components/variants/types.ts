@@ -1,3 +1,5 @@
+import type { DragEndEvent } from "@dnd-kit/core";
+
 export interface HeaderItem {
   id: string;
   content: string;
@@ -7,6 +9,8 @@ export interface HeaderItem {
   type: "text" | "image";
   width: number;
   height: number;
+  x: number; 
+  y: number; 
 }
 
 export interface FooterItem {
@@ -26,6 +30,8 @@ export interface HeaderProps {
   items: HeaderItem[];
   onEdit?: (item: HeaderItem) => void;
   onDelete?: (id: string) => void;
+  onDragEnd?: (event: DragEndEvent) => void;
+  updateItemPosition?: (id: string, x: number, y: number) => void;
 }
 
 

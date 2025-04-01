@@ -22,50 +22,71 @@ export default function Home() {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
     const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
-  
+
     setSelectedHeader(savedHeader);
     setSelectedFooter(savedFooter);
     setLogoUrl(savedLogo);
-  
+
     const savedHeaderItems = JSON.parse(localStorage.getItem(`headerItems-${savedHeader}`) || "[]");
     const savedFooterItems = JSON.parse(localStorage.getItem(`footerItems-${savedFooter}`) || "[]");
-  
+
     setHeaderItems({ [savedHeader]: savedHeaderItems });
     setFooterItems({ [savedFooter]: savedFooterItems });
   }, []);
-  
 
   useEffect(() => {
     localStorage.setItem("logoUrl", logoUrl);
   }, [logoUrl]);
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
-    const newItem = {
-      id: `item-${Date.now()}`,
-      content: type === "text" ? "Nieuw Tekstelement" : "https://via.placeholder.com/100",
+    const newItem: HeaderItem = {
+      id: crypto.randomUUID(),
       type,
-      width: 200,
-      height: section === "footer" ? 40 : 60,
-      fontSize: section === "footer" ? 14 : 16,
+      content: type === "text" ? "Nieuwe tekst" : "/placeholder.jpg",
+      width: 150,
+      height: 40,
+      fontSize: 14,
       fontFamily: "Arial",
       textColor: "#000000",
+      x: 50,
+      y: 50,
     };
-
-    if (section === "footer") {
-      setFooterItems((prev) => {
-        const updated = [...(prev[selectedFooter] || []), newItem];
-        localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
-        return { ...prev, [selectedFooter]: updated };
-      });
-    }
 
     if (section === "header") {
       setHeaderItems((prev) => {
         const updated = [...(prev[selectedHeader] || []), newItem];
         localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
-        return { ...prev, [selectedHeader]: updated };
+        return {
+          ...prev,
+          [selectedHeader]: updated,
+        };
       });
     }
+
+    if (section === "footer") {
+      setFooterItems((prev) => {
+        const updated = [...(prev[selectedFooter] || []), newItem];
+        localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
+        return {
+          ...prev,
+          [selectedFooter]: updated,
+        };
+      });
+    }
+  };
+
+  const updateItemPosition = (id: string, x: number, y: number) => {
+    setHeaderItems((prev) => {
+      const items = prev[selectedHeader] || [];
+      const updated = items.map((item) =>
+        item.id === id ? { ...item, x, y } : item
+      );
+      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+      return {
+        ...prev,
+        [selectedHeader]: updated,
+      };
+    });
   };
 
   const FooterComponent = footers[selectedFooter];
@@ -90,21 +111,18 @@ export default function Home() {
         setLogoUrl={setLogoUrl}
       />
 
-      
-
       <main className="flex-grow">
-      <LayoutBuilder
-  selectedHeader={selectedHeader}
-  logoUrl={logoUrl}
-  setLogoUrl={setLogoUrl}
-  headerItems={headerItems[selectedHeader] || []}
-  setHeaderItems={setHeaderItems}
-  selectedFooter={selectedFooter}
-  footerItems={footerItems[selectedFooter] || []}
-  setFooterItems={setFooterItems}
-  // eventueel ook: editModal props etc...
-
+        <LayoutBuilder
+          selectedHeader={selectedHeader}
+          logoUrl={logoUrl}
+          setLogoUrl={setLogoUrl}
+          headerItems={headerItems[selectedHeader] || []}
+          setHeaderItems={setHeaderItems}
+          selectedFooter={selectedFooter}
+          footerItems={footerItems[selectedFooter] || []}
+          setFooterItems={setFooterItems}
         />
+
         <Body />
       </main>
 
