@@ -21,10 +21,13 @@ export interface FooterItem {
 }
 
 export interface HeaderProps {
-  items: HeaderItem[];
-  logoUrl?: string;
+  logoUrl: string;
   setLogoUrl?: (url: string) => void;
+  items: HeaderItem[];
+  onEdit?: (item: HeaderItem) => void;
+  onDelete?: (id: string) => void;
 }
+
 
 export interface FooterProps {
   items: FooterItem[];
