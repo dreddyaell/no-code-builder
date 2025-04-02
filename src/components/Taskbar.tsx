@@ -46,7 +46,7 @@ export default function Taskbar({
   const availableFooters = ["footer1", "footer2", "footer3"];
 
   return (
-    <div className="fixed top-2 left-2 z-50">
+    <div className="fixed top-1/2 left-2 -translate-y-1/2 z-50">
       {/* Toggle knop voor instellingenbalk */}
       <button
         onClick={() => setIsOpen(!isOpen)}

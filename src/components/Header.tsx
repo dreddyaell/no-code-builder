@@ -1,41 +1,25 @@
-"use client";
-
-import headers from "@/components/variants/headers";
+import BaseHeader from "@/components/BaseHeader";
 import { HeaderItem } from "@/components/variants/types";
-import type { DragEndEvent } from "@dnd-kit/core";
 
-export interface HeaderProps {
-  selectedHeader: string;
+interface Header1Props {
   items: HeaderItem[];
   logoUrl: string;
   setLogoUrl?: (url: string) => void;
   onEdit?: (item: HeaderItem) => void;
   onDelete?: (id: string) => void;
-  onDragEnd?: (event: DragEndEvent) => void;
   updateItemPosition?: (id: string, x: number, y: number) => void;
 }
 
-export default function Header({
-  selectedHeader,
-  items,
-  logoUrl,
-  setLogoUrl,
-  onEdit,
-  onDelete,
-  onDragEnd,
-  updateItemPosition,
-}: HeaderProps) {
-  const HeaderComponent = headers[selectedHeader] || headers["header1"];
-
+export default function Header1(props: Header1Props) {
   return (
-    <HeaderComponent
-      items={items}
-      logoUrl={logoUrl ?? ""}
-      setLogoUrl={setLogoUrl}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      onDragEnd={onDragEnd}
-      updateItemPosition={updateItemPosition}
+    <BaseHeader
+      {...props}
+      renderLayout={(logo, nav, children) => (
+        <header className="relative min-h-[150px] bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+          <div className="flex gap-4 items-center">{logo}{nav}</div>
+          {children}
+        </header>
+      )}
     />
   );
 }

@@ -24,7 +24,7 @@ import Header9 from "./Header9";
 import Header10 from "./Header10";*/
 
 // ✅ Fix: Correcte type-definitie met `items` prop
-const headers: { [key: string]: React.FC<HeaderProps> } = {
+const headers: { [key: string]: any } = {
   header1: Header1,
   header2: Header2,
   /* header3: Header3,

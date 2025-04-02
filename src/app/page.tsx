@@ -17,6 +17,7 @@ export default function Home() {
 
   const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
   const [logoUrl, setLogoUrl] = useState("/logo.png");
+  const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";

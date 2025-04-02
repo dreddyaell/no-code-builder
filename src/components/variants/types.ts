@@ -1,5 +1,5 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-
+import { BaseHeaderProps } from "@/components/BaseHeader";
 export interface HeaderItem {
   id: string;
   content: string;
@@ -11,6 +11,10 @@ export interface HeaderItem {
   height: number;
   x: number; 
   y: number; 
+}
+
+export interface HeaderProps extends Partial<BaseHeaderProps> {
+  selectedHeader: string;
 }
 
 export interface FooterItem {
