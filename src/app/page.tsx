@@ -99,6 +99,8 @@ export default function Home() {
         setIsOpen={setIsTaskbarOpen}
         openModal={openModal}
         selectedHeader={selectedHeader}
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
         setSelectedHeader={(header) => {
           setSelectedHeader(header);
           localStorage.setItem("selectedHeader", header);
@@ -122,6 +124,7 @@ export default function Home() {
           selectedFooter={selectedFooter}
           footerItems={footerItems[selectedFooter] || []}
           setFooterItems={setFooterItems}
+          previewMode={previewMode}
         />
 
         <Body />

@@ -20,6 +20,8 @@ interface TaskbarProps {
   footerHeight?: number;
   logoUrl?: string;
   setLogoUrl?: (url: string) => void;
+  previewMode: boolean;
+  setPreviewMode: (val: boolean) => void;
 }
 
 export default function Taskbar({
@@ -39,15 +41,16 @@ export default function Taskbar({
   setFooterColor,
   setFooterHeight,
   footerHeight,
-  logoUrl,           
-  setLogoUrl,      
+  logoUrl,
+  setLogoUrl,
+  previewMode,
+  setPreviewMode,
 }: TaskbarProps) {
   const availableHeaders = ["header1", "header2", "header3", "header4"];
   const availableFooters = ["footer1", "footer2", "footer3"];
 
   return (
     <div className="fixed top-1/2 left-2 -translate-y-1/2 z-50">
-      {/* Toggle knop voor instellingenbalk */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 bg-gray-800 text-white rounded shadow-md mb-2"
@@ -55,13 +58,23 @@ export default function Taskbar({
         {isOpen ? "🔽 Sluiten" : "🔼 Instellingen"}
       </button>
 
-      {/* Instellingenbalk */}
       <div
-        className={`transition-all duration-300 ${
-          isOpen ? "block opacity-100" : "hidden opacity-0"
-        } bg-gray-800 text-white p-3 rounded shadow-md w-64`}
+        className={`transition-all duration-300 ${isOpen ? "block opacity-100" : "hidden opacity-0"
+          } bg-gray-800 text-white p-3 rounded shadow-md w-64`}
       >
         <h3 className="text-lg font-bold mb-2">⚙️ Instellingen</h3>
+
+        {/* 🧪 Preview Mode Toggle */}
+        <div className="mb-4 flex items-center gap-2">
+          <label className="text-sm font-medium">🎬 Preview Mode:</label>
+          <button
+            onClick={() => setPreviewMode(!previewMode)}
+            className={`px-3 py-1 rounded text-white text-xs font-semibold ${previewMode ? "bg-green-600" : "bg-gray-600"
+              }`}
+          >
+            {previewMode ? "AAN" : "UIT"}
+          </button>
+        </div>
 
         {/* 🖥️ Header Selectie */}
         <div className="mb-4">
@@ -104,39 +117,39 @@ export default function Taskbar({
           </div>
         )}
 
-{setLogoUrl && (
-  <div className="mt-4">
-    <label className="block text-sm mb-1">🖼️ Logo:</label>
+        {setLogoUrl && (
+          <div className="mt-4">
+            <label className="block text-sm mb-1">🖼️ Logo:</label>
 
-    {/* 🔹 URL invoer */}
-    <input
-      type="text"
-      defaultValue={logoUrl}
-      onBlur={(e) => setLogoUrl(e.target.value)}
-      placeholder="Plak een logo-URL..."
-      className="w-full p-2 mb-2 rounded bg-gray-700 text-white"
-    />
+            {/* 🔹 URL invoer */}
+            <input
+              type="text"
+              defaultValue={logoUrl}
+              onBlur={(e) => setLogoUrl(e.target.value)}
+              placeholder="Plak een logo-URL..."
+              className="w-full p-2 mb-2 rounded bg-gray-700 text-white"
+            />
 
-    {/* 🔹 Bestand upload */}
-    <input
-      type="file"
-      accept="image/*"
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            if (reader.result) {
-              setLogoUrl(reader.result as string); // base64 afbeelding
-            }
-          };
-          reader.readAsDataURL(file);
-        }
-      }}
-      className="w-full text-sm bg-gray-800 text-white file:bg-gray-600 file:border-0 file:rounded file:px-3 file:py-1 file:cursor-pointer"
-    />
-  </div>
-)}
+            {/* 🔹 Bestand upload */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    if (reader.result) {
+                      setLogoUrl(reader.result as string); // base64 afbeelding
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              className="w-full text-sm bg-gray-800 text-white file:bg-gray-600 file:border-0 file:rounded file:px-3 file:py-1 file:cursor-pointer"
+            />
+          </div>
+        )}
 
 
         {setHeaderHeight && (

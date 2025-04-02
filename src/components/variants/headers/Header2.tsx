@@ -12,6 +12,93 @@ interface Header2Props {
   onEdit?: (item: HeaderItem) => void;
   onDelete?: (id: string) => void;
   updateItemPosition?: (id: string, x: number, y: number) => void;
+  previewMode?: boolean;
+}
+
+function DraggableItem({
+  item,
+  onEdit,
+  onDelete,
+  updateItemPosition,
+  previewMode,
+}: {
+  item: HeaderItem;
+  onEdit?: (item: HeaderItem) => void;
+  onDelete?: (id: string) => void;
+  updateItemPosition?: (id: string, x: number, y: number) => void;
+  previewMode?: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: item.id });
+
+  const style: React.CSSProperties = {
+    position: "absolute",
+    left: transform ? item.x + transform.x : item.x,
+    top: transform ? item.y + transform.y : item.y,
+    width: item.width,
+    height: item.height,
+    zIndex: 10,
+    cursor: previewMode ? "default" : "move",
+    pointerEvents: previewMode ? "none" : "auto",
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <div
+        className="relative w-full h-full text-center px-1"
+        style={{ backgroundColor: "transparent" }}
+      >
+        {!previewMode && (
+          <div
+            {...attributes}
+            {...listeners}
+            className="absolute left-0 top-1/2 -translate-y-1/2 px-1 text-sm text-gray-900 cursor-move z-20"
+          >
+            ⠿
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="w-full h-full flex items-center justify-center">
+          {item.type === "text" ? (
+            <div
+              style={{
+                fontSize: item.fontSize,
+                fontFamily: item.fontFamily,
+                color: item.textColor,
+                backgroundColor: "transparent",
+              }}
+            >
+              {item.content}
+            </div>
+          ) : (
+            <img
+              src={item.content}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          )}
+        </div>
+
+        {/* Edit/Delete buttons */}
+        {!previewMode && (
+          <div className="flex gap-1 mt-1 justify-center">
+            <button
+              onClick={() => onEdit?.(item)}
+              className="text-xs bg-yellow-500 text-white px-2 py-1 rounded"
+            >
+              ✏️
+            </button>
+            <button
+              onClick={() => onDelete?.(item.id)}
+              className="text-xs bg-red-600 text-white px-2 py-1 rounded"
+            >
+              ❌
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function Header2({
@@ -21,6 +108,7 @@ export default function Header2({
   onEdit,
   onDelete,
   updateItemPosition,
+  previewMode,
 }: Header2Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -45,83 +133,12 @@ export default function Header2({
     reader.readAsDataURL(file);
   };
 
-  const DraggableItem = ({ item }: { item: HeaderItem }) => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: item.id });
-
-    const wrapperStyle = {
-      position: "absolute" as const,
-      left: transform ? item.x + transform.x : item.x,
-      top: transform ? item.y + transform.y : item.y,
-    };
-
-    const boxStyle = {
-      width: item.width,
-      height: item.height,
-      fontSize: item.fontSize,
-      fontFamily: item.fontFamily,
-      color: item.textColor,
-      backgroundColor: "transparent", // 🟣 transparant!
-      padding: "8px",
-      textAlign: "center" as const,
-      zIndex: 10,
-      border: "2px dashed rgba(255,255,255,0.4)", // subtiele witte rand
-      borderRadius: "8px",
-      boxShadow: "0 1px 2px rgba(0,0,0,0.2)", // leesbaarheid
-    };
-
-    return (
-      <div style={wrapperStyle}>
-        {/* Drag handle links */}
-        <div
-          ref={setNodeRef}
-          {...listeners}
-          {...attributes}
-          className="w-6 h-6 flex justify-center items-center text-black text-lg font-extrabold cursor-grab absolute -left-8 top-2 rounded bg-white border border-gray-300 shadow hover:bg-gray-100"
-        >
-          ⋮
-        </div>
-
-        <div style={boxStyle}>
-          {item.type === "text" ? (
-            <div>{item.content}</div>
-          ) : (
-            <img
-              src={item.content}
-              alt=""
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            />
-          )}
-          <div className="flex gap-2 mt-2 justify-center">
-            <button
-              onClick={() => onEdit?.(item)}
-              className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
-            >
-              ✏️
-            </button>
-            <button
-              onClick={() => onDelete?.(item.id)}
-              className="bg-red-600 text-white px-2 py-1 rounded text-xs"
-            >
-              ❌
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <header className="relative w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-6 min-h-[200px] px-8 shadow-md">
       <div className="flex justify-between items-center mb-4">
         <div className="cursor-pointer" onClick={() => fileInputRef.current?.click()}>
           <Image src={logoUrl || "/logo.png"} alt="Logo" width={100} height={60} />
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-          />
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
         </div>
 
         <div className="space-x-4 text-sm">
@@ -142,7 +159,14 @@ export default function Header2({
 
       <DndContext onDragEnd={handleDragEnd}>
         {items.map((item) => (
-          <DraggableItem key={item.id} item={item} />
+          <DraggableItem
+            key={item.id}
+            item={item}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            updateItemPosition={updateItemPosition}
+            previewMode={previewMode}
+          />
         ))}
       </DndContext>
     </header>

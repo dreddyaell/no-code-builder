@@ -16,6 +16,7 @@ interface Header1Props {
   onEdit?: (item: HeaderItem) => void;
   onDelete?: (id: string) => void;
   updateItemPosition?: (id: string, x: number, y: number) => void;
+  previewMode?: boolean;
 }
 
 function DraggableHeaderItem({
@@ -23,11 +24,13 @@ function DraggableHeaderItem({
   onEdit,
   onDelete,
   updateItemPosition,
+  previewMode,
 }: {
   item: HeaderItem;
   onEdit?: (item: HeaderItem) => void;
   onDelete?: (id: string) => void;
   updateItemPosition?: (id: string, x: number, y: number) => void;
+  previewMode?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: item.id });
 
@@ -38,15 +41,18 @@ function DraggableHeaderItem({
     width: item.width,
     height: item.height,
     zIndex: 10,
+    pointerEvents: previewMode ? "none" : "auto", // ✅ Geen interactie in preview
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="pointer-events-auto">
-      <div className="relative w-full h-full bg-white p-1 text-center">
+    <div ref={setNodeRef} style={style}>
+      <div className="relative w-full h-full p-1 text-center rounded">
         {/* ⠿ Drag Handle */}
-        <div {...listeners} {...attributes} className="cursor-move absolute top-0 left-0 px-2 py-1 z-10">
-          ⠿
-        </div>
+        {!previewMode && (
+          <div {...listeners} {...attributes} className="cursor-move absolute top-0 left-0 px-2 py-1 z-10 text-black">
+            ⠿
+          </div>
+        )}
 
         {/* Content */}
         {item.type === "text" ? (
@@ -55,6 +61,7 @@ function DraggableHeaderItem({
               fontSize: item.fontSize,
               fontFamily: item.fontFamily,
               color: item.textColor,
+              backgroundColor: "transparent",
             }}
           >
             {item.content}
@@ -68,20 +75,22 @@ function DraggableHeaderItem({
         )}
 
         {/* Bewerken / Verwijderen */}
-        <div className="flex justify-center gap-1 mt-1">
-          <button
-            onClick={() => onEdit?.(item)}
-            className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
-          >
-            ✏️
-          </button>
-          <button
-            onClick={() => onDelete?.(item.id)}
-            className="bg-red-600 text-white px-2 py-1 rounded text-xs"
-          >
-            ❌
-          </button>
-        </div>
+        {!previewMode && (
+          <div className="flex justify-center gap-1 mt-1">
+            <button
+              onClick={() => onEdit?.(item)}
+              className="bg-yellow-500 text-white px-2 py-1 rounded text-xs"
+            >
+              ✏️
+            </button>
+            <button
+              onClick={() => onDelete?.(item.id)}
+              className="bg-red-600 text-white px-2 py-1 rounded text-xs"
+            >
+              ❌
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -95,13 +104,13 @@ export default function Header1({
   onEdit,
   onDelete,
   updateItemPosition,
+  previewMode,
 }: Header1Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
       if (reader.result && setLogoUrl) {
@@ -164,19 +173,19 @@ export default function Header1({
           <a href="#">Partner-portaal</a>
         </div>
       </div>
-      
+
       <DndContext onDragEnd={handleDragEnd}>
         {items.map((item) => (
           <DraggableHeaderItem
-            key={item.id}
-            item={item}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            updateItemPosition={updateItemPosition}
+          key={item.id}
+          item={item}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          updateItemPosition={updateItemPosition}
+          previewMode={previewMode}
           />
         ))}
       </DndContext>
-
     </header>
   );
 }

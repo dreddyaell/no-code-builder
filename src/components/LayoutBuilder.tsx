@@ -14,6 +14,7 @@ interface LayoutBuilderProps {
   selectedFooter: string;
   footerItems: FooterItem[];
   setFooterItems: React.Dispatch<React.SetStateAction<{ [key: string]: FooterItem[] }>>;
+  previewMode: boolean;
 }
 
 export default function LayoutBuilder({
@@ -25,6 +26,7 @@ export default function LayoutBuilder({
   selectedFooter,
   footerItems,
   setFooterItems,
+  previewMode,
 }: LayoutBuilderProps) {
   const HeaderComponent = headers[selectedHeader];
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -99,6 +101,7 @@ export default function LayoutBuilder({
           onEdit={openEditModal}
           onDelete={removeElement}
           updateItemPosition={updateItemPosition}
+          previewMode={previewMode}
         />
       )}
 
