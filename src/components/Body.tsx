@@ -1,9 +1,36 @@
 "use client";
 
-export default function Body() {
+import bodies from "@/components/variants/bodies";
+import { HeaderItem } from "@/components/variants/types";
+import type { DragEndEvent } from "@dnd-kit/core";
+
+export interface BodyProps {
+  selectedBody: string;
+  items: HeaderItem[];
+  onEdit?: (item: HeaderItem) => void;
+  onDelete?: (id: string) => void;
+  updateItemPosition?: (id: string, x: number, y: number) => void;
+  previewMode?: boolean;
+}
+
+export default function Body({
+  selectedBody,
+  items,
+  onEdit,
+  onDelete,
+  updateItemPosition,
+  previewMode,
+}: BodyProps) {
+  // Fallback naar "body1" als de key niet bestaat
+  const BodyComponent = bodies[selectedBody] || bodies["body1"];
+
   return (
-    <main className="flex-grow flex flex-col items-center justify-center p-8 gap-8">
-      <h1 className="text-2xl font-bold">🚀 No-Code Website Builder</h1>
-    </main>
+    <BodyComponent
+      items={items}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      updateItemPosition={updateItemPosition}
+      previewMode={previewMode}
+    />
   );
 }

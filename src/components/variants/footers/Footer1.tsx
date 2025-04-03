@@ -1,66 +1,30 @@
 "use client";
 
-import { FooterProps } from "../types";
+import { FooterItem } from "@/components/variants/types";
 
-export default function Footer1({ items }: FooterProps) {
+interface Footer1Props {
+  items: FooterItem[];
+}
+
+export default function Footer1({ items }: Footer1Props) {
   return (
-    <footer className="bg-gray-900 text-white p-6">
-      {/* 🔝 Bovenste navigatie */}
-      <div className="flex justify-between mb-6">
-        <div className="space-x-4">
-          <a href="#" className="hover:underline">Support</a>
-          <a href="#" className="hover:underline">FAQ</a>
-          <a href="#" className="hover:underline">Handleidingen</a>
+    <footer className="w-full bg-gray-900 text-white px-6 py-4">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* Logo of Image from items */}
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="Logo" className="h-8 w-8" />
+          <span className="text-lg font-semibold">NoCode Studio</span>
         </div>
-        <div className="space-x-4">
-          <a href="#" className="hover:underline">Extranet</a>
-          <a href="#" className="hover:underline">Contact</a>
-          <a href="#" className="hover:underline">Privacy</a>
-        </div>
-      </div>
 
-      {/* 🔄 Dynamisch gegenereerde content */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="text-center"
-            style={{
-              width: item.width,
-              height: item.height,
-              fontSize: item.fontSize,
-              fontFamily: item.fontFamily,
-              color: item.textColor,
-            }}
-          >
-            {item.type === "image" ? (
-              <img
-                src={item.content}
-                alt="footer image"
-                className="mx-auto object-contain"
-                style={{
-                  maxWidth: item.width,
-                  maxHeight: item.height,
-                }}
-              />
-            ) : (
-              <span>{item.content}</span>
-            )}
-          </div>
-        ))}
-      </div>
+        {/* Navigation */}
+        <nav className="flex gap-6 text-sm">
+          <a href="#" className="hover:text-gray-300">Extranet</a>
+          <a href="#" className="hover:text-gray-300">Contact</a>
+          <a href="#" className="hover:text-gray-300">Privacy</a>
+        </nav>
 
-      {/* 🌍 Socials & taal */}
-      <div className="flex justify-between items-center text-sm text-gray-400 border-t border-gray-700 pt-4">
-        <div className="space-x-3">
-          <a href="#">📘</a>
-          <a href="#">🐦</a>
-          <a href="#">📷</a>
-        </div>
-        <div className="flex items-center space-x-1">
-          <img src="/icons/nl-flag.png" alt="NL" width={20} height={14} />
-          <span>NL</span>
-        </div>
+        {/* Language switcher */}
+        <div className="text-xs text-gray-400">🌐 NL</div>
       </div>
     </footer>
   );

@@ -6,7 +6,6 @@ import Taskbar from "@/components/Taskbar";
 import Body from "@/components/Body";
 import LayoutBuilder from "@/components/LayoutBuilder";
 import { FooterItem, HeaderItem } from "@/components/variants/types";
-import Header from "@/components/Header";
 
 export default function Home() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
@@ -18,11 +17,14 @@ export default function Home() {
   const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
   const [logoUrl, setLogoUrl] = useState("/logo.png");
   const [previewMode, setPreviewMode] = useState(false);
+  const [selectedBody, setSelectedBody] = useState("body1");
+
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
     const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
+
 
     setSelectedHeader(savedHeader);
     setSelectedFooter(savedFooter);
@@ -99,22 +101,27 @@ export default function Home() {
         setIsOpen={setIsTaskbarOpen}
         openModal={openModal}
         selectedHeader={selectedHeader}
-        previewMode={previewMode}
-        setPreviewMode={setPreviewMode}
         setSelectedHeader={(header) => {
           setSelectedHeader(header);
           localStorage.setItem("selectedHeader", header);
+        }}
+        selectedBody={selectedBody}
+        setSelectedBody={(body) => {
+          setSelectedBody(body);
+          localStorage.setItem("selectedBody", body);
         }}
         selectedFooter={selectedFooter}
         setSelectedFooter={(footer) => {
           setSelectedFooter(footer);
           localStorage.setItem("selectedFooter", footer);
         }}
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
         logoUrl={logoUrl}
         setLogoUrl={setLogoUrl}
       />
 
-      <main className="flex-grow">
+      <main className="flex-1 flex flex-col overflow-hidden">
         <LayoutBuilder
           selectedHeader={selectedHeader}
           logoUrl={logoUrl}
@@ -125,14 +132,10 @@ export default function Home() {
           footerItems={footerItems[selectedFooter] || []}
           setFooterItems={setFooterItems}
           previewMode={previewMode}
+          selectedBody={selectedBody}
         />
-
-        <Body />
       </main>
 
-      <footer>
-        <FooterComponent items={footerItems[selectedFooter] || []} />
-      </footer>
     </div>
   );
 }
