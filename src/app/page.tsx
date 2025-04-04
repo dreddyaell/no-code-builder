@@ -3,30 +3,33 @@
 import { useEffect, useState } from "react";
 import footers from "@/components/variants/footers";
 import Taskbar from "@/components/Taskbar";
-import Body from "@/components/Body";
 import LayoutBuilder from "@/components/LayoutBuilder";
 import { FooterItem, HeaderItem } from "@/components/variants/types";
 
 export default function Home() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
+  const [selectedBody, setSelectedBody] = useState("body1");
   const [selectedFooter, setSelectedFooter] = useState("footer1");
 
   const [headerItems, setHeaderItems] = useState<{ [key: string]: HeaderItem[] }>({});
+  const [bodyItems, setBodyItems] = useState<HeaderItem[]>(() => {
+    const saved = localStorage.getItem("bodyItems-body1");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [footerItems, setFooterItems] = useState<{ [key: string]: FooterItem[] }>({});
 
   const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
   const [logoUrl, setLogoUrl] = useState("/logo.png");
   const [previewMode, setPreviewMode] = useState(false);
-  const [selectedBody, setSelectedBody] = useState("body1");
-
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
+    const savedBody = localStorage.getItem("selectedBody") || "body1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
     const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
 
-
     setSelectedHeader(savedHeader);
+    setSelectedBody(savedBody);
     setSelectedFooter(savedFooter);
     setLogoUrl(savedLogo);
 
@@ -42,10 +45,62 @@ export default function Home() {
   }, [logoUrl]);
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
+    if (type === "image") {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const newItem: HeaderItem = {
+            id: crypto.randomUUID(),
+            type: "image",
+            content: reader.result as string,
+            width: 300,
+            height: 200,
+            fontSize: 14,
+            fontFamily: "Arial",
+            textColor: "#000000",
+            x: 50,
+            y: 50,
+          };
+
+          if (section === "header") {
+            setHeaderItems((prev) => {
+              const updated = [...(prev[selectedHeader] || []), newItem];
+              localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
+              return { ...prev, [selectedHeader]: updated };
+            });
+          } else if (section === "footer") {
+            setFooterItems((prev) => {
+              const updated = [...(prev[selectedFooter] || []), newItem];
+              localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
+              return { ...prev, [selectedFooter]: updated };
+            });
+          } else if (section === "body") {
+            setBodyItems((prev) => {
+              const updated = [...prev, newItem];
+              localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
+              return updated;
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      };
+
+      input.click();
+      return;
+    }
+
+    // default: text element
     const newItem: HeaderItem = {
       id: crypto.randomUUID(),
-      type,
-      content: type === "text" ? "Nieuwe tekst" : "/placeholder.jpg",
+      type: "text",
+      content: "Nieuwe tekst",
       width: 150,
       height: 40,
       fontSize: 14,
@@ -59,40 +114,22 @@ export default function Home() {
       setHeaderItems((prev) => {
         const updated = [...(prev[selectedHeader] || []), newItem];
         localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
-        return {
-          ...prev,
-          [selectedHeader]: updated,
-        };
+        return { ...prev, [selectedHeader]: updated };
       });
-    }
-
-    if (section === "footer") {
+    } else if (section === "footer") {
       setFooterItems((prev) => {
         const updated = [...(prev[selectedFooter] || []), newItem];
         localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
-        return {
-          ...prev,
-          [selectedFooter]: updated,
-        };
+        return { ...prev, [selectedFooter]: updated };
+      });
+    } else if (section === "body") {
+      setBodyItems((prev) => {
+        const updated = [...prev, newItem];
+        localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
+        return updated;
       });
     }
   };
-
-  const updateItemPosition = (id: string, x: number, y: number) => {
-    setHeaderItems((prev) => {
-      const items = prev[selectedHeader] || [];
-      const updated = items.map((item) =>
-        item.id === id ? { ...item, x, y } : item
-      );
-      localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
-      return {
-        ...prev,
-        [selectedHeader]: updated,
-      };
-    });
-  };
-
-  const FooterComponent = footers[selectedFooter];
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -101,24 +138,18 @@ export default function Home() {
         setIsOpen={setIsTaskbarOpen}
         openModal={openModal}
         selectedHeader={selectedHeader}
-        setSelectedHeader={(header) => {
-          setSelectedHeader(header);
-          localStorage.setItem("selectedHeader", header);
-        }}
+        setSelectedHeader={setSelectedHeader}
         selectedBody={selectedBody}
-        setSelectedBody={(body) => {
-          setSelectedBody(body);
-          localStorage.setItem("selectedBody", body);
-        }}
+        setSelectedBody={setSelectedBody}
         selectedFooter={selectedFooter}
-        setSelectedFooter={(footer) => {
-          setSelectedFooter(footer);
-          localStorage.setItem("selectedFooter", footer);
-        }}
+        setSelectedFooter={setSelectedFooter}
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
         logoUrl={logoUrl}
         setLogoUrl={setLogoUrl}
+        bodyItems={bodyItems}
+        setBodyItems={setBodyItems}
+        setBodyColor={() => {}} // optioneel, of implementeren
       />
 
       <main className="flex-1 flex flex-col overflow-hidden">
@@ -131,11 +162,12 @@ export default function Home() {
           selectedFooter={selectedFooter}
           footerItems={footerItems[selectedFooter] || []}
           setFooterItems={setFooterItems}
-          previewMode={previewMode}
           selectedBody={selectedBody}
+          bodyItems={bodyItems}
+          setBodyItems={setBodyItems}
+          previewMode={previewMode}
         />
       </main>
-
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { HeaderItem } from "@/components/variants/types";
 
 interface TaskbarProps {
   isOpen: boolean;
@@ -9,21 +9,13 @@ interface TaskbarProps {
   setSelectedHeader: (headerType: string) => void;
   selectedBody: string;
   setSelectedBody: (bodyType: string) => void;
-  selectedFooter?: string;
-  setSelectedFooter?: (footerType: string) => void;
-  setHeaderColor?: (color: string) => void;
-  setHeaderHeight?: (height: number) => void;
-  headerHeight?: number;
-  setBodyColor?: (color: string) => void;
-  setBodyHeight?: (height: number) => void;
-  bodyHeight?: number;
-  setFooterColor?: (color: string) => void;
-  setFooterHeight?: (height: number) => void;
-  footerHeight?: number;
-  logoUrl?: string;
-  setLogoUrl?: (url: string) => void;
+  selectedFooter: string;
+  setSelectedFooter: (footerType: string) => void;
   previewMode: boolean;
   setPreviewMode: (val: boolean) => void;
+  setBodyItems: React.Dispatch<React.SetStateAction<HeaderItem[]>>;
+  bodyItems: HeaderItem[];
+  setBodyColor: (color: string) => void;
 }
 
 export default function Taskbar({
@@ -36,139 +28,153 @@ export default function Taskbar({
   setSelectedBody,
   selectedFooter,
   setSelectedFooter,
-  setHeaderColor,
-  setHeaderHeight,
-  headerHeight,
-  setBodyColor,
-  setBodyHeight,
-  bodyHeight,
-  setFooterColor,
-  setFooterHeight,
-  footerHeight,
-  logoUrl,
-  setLogoUrl,
   previewMode,
   setPreviewMode,
+  setBodyItems,
+  bodyItems,
+  setBodyColor,
 }: TaskbarProps) {
-  const availableHeaders = ["header1", "header2", "header3", "header4", "header5"];
-  const availableBodies = ["body1"]; // add more later
-  const availableFooters = ["footer1", "footer2", "footer3"];
+  const handleBodyImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      const newItem: HeaderItem = {
+        id: crypto.randomUUID(),
+        type: "image",
+        content: base64,
+        width: 800,
+        height: 400,
+        fontSize: 14,
+        fontFamily: "Arial",
+        textColor: "#000000",
+        x: 0,
+        y: 0,
+      };
+  
+      const current = Array.isArray(bodyItems) ? bodyItems : [];
+      const updated = [...current, newItem];
+      setBodyItems(updated);
+      localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div className="fixed top-1/2 left-2 -translate-y-1/2 z-50">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-gray-800 text-white rounded shadow-md mb-2"
+        className="p-2 bg-gray-800 text-white rounded shadow mb-2"
       >
         {isOpen ? "🔽 Sluiten" : "🔼 Instellingen"}
       </button>
 
-      <div className={`transition-all duration-300 ${isOpen ? "block" : "hidden"} bg-gray-800 text-white p-3 rounded shadow-md w-64`}>
-        <h3 className="text-lg font-bold mb-2">⚙️ Instellingen</h3>
+      <div className={`transition-all ${isOpen ? "block" : "hidden"} bg-gray-800 text-white p-4 rounded shadow-md w-64`}>
+        <h3 className="text-lg font-bold mb-4">⚙️ Instellingen</h3>
 
         {/* Preview Mode */}
-        <div className="mb-4 flex items-center gap-2">
-          <label className="text-sm font-medium">🎬 Preview Mode:</label>
+        <div className="flex justify-between items-center mb-4">
+          <span>🎬 Preview:</span>
           <button
             onClick={() => setPreviewMode(!previewMode)}
-            className={`px-3 py-1 rounded text-white text-xs font-semibold ${previewMode ? "bg-green-600" : "bg-gray-600"}`}
+            className={`px-3 py-1 text-xs rounded ${previewMode ? "bg-green-600" : "bg-gray-600"}`}
           >
             {previewMode ? "AAN" : "UIT"}
           </button>
         </div>
 
-        {/* Header Select */}
+        {/* 🖥️ Header Select */}
         <div className="mb-4">
           <label className="block text-sm">🖥️ Kies een Header:</label>
           <select
             value={selectedHeader}
-            onChange={(e) => {
-              setSelectedHeader(e.target.value);
-              localStorage.setItem("selectedHeader", e.target.value);
-            }}
-            className="w-full bg-gray-700 text-white p-2 rounded"
+            onChange={(e) => setSelectedHeader(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700"
           >
-            {availableHeaders.map((header) => (
-              <option key={header} value={header}>
-                {header.toUpperCase()}
-              </option>
-            ))}
+            <option value="header1">HEADER1</option>
+            <option value="header2">HEADER2</option>
+            <option value="header3">HEADER3</option>
+            <option value="header4">HEADER4</option>
+            <option value="header5">HEADER5</option>
           </select>
+          <button
+            onClick={() => openModal("header", "text")}
+            className="bg-green-500 mt-2 w-full p-2 rounded"
+          >
+            ➕ Tekst toevoegen
+          </button>
+          <button
+            onClick={() => openModal("header", "image")}
+            className="bg-blue-500 mt-1 w-full p-2 rounded"
+          >
+            🖼️ Afbeelding toevoegen
+          </button>
         </div>
 
-        <button
-          onClick={() => openModal("header", "text")}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
-        >
-          ➕ Tekst toevoegen
-        </button>
-        <button
-          onClick={() => openModal("header", "image")}
-          className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
-        >
-          🖼️ Afbeelding toevoegen
-        </button>
-
-        {/* Body Select */}
-        <div className="my-4">
-          <label className="block text-sm">📌 Kies een Body:</label>
+        {/* 🧱 Body Select */}
+        <div className="mb-4">
+          <label className="block text-sm">🧱 Kies een Body:</label>
           <select
             value={selectedBody}
-            onChange={(e) => {
-              setSelectedBody(e.target.value);
-              localStorage.setItem("selectedBody", e.target.value);
-            }}
-            className="w-full bg-gray-700 text-white p-2 rounded"
+            onChange={(e) => setSelectedBody(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700"
           >
-            {availableBodies.map((body) => (
-              <option key={body} value={body}>
-                {body.toUpperCase()}
-              </option>
-            ))}
+            <option value="body1">BODY1</option>
+            <option value="body2">BODY2</option>
           </select>
+
+          <button
+            onClick={() => openModal("body", "text")}
+            className="bg-green-500 mt-2 w-full p-2 rounded"
+          >
+            ➕ Tekst toevoegen
+          </button>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleBodyImageUpload}
+            className="mt-2 w-full file:cursor-pointer file:rounded file:bg-blue-600 file:text-white"
+          />
+
+          <div className="mt-4">
+            <label className="block text-sm">🎨 Body Kleur:</label>
+            <input
+              type="color"
+              defaultValue="#1f1f1f"
+              onChange={(e) => setBodyColor(e.target.value)}
+              className="w-full bg-transparent border-none"
+            />
+          </div>
         </div>
 
-        <button
-          onClick={() => openModal("body", "text")}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
-        >
-          ➕ Tekst toevoegen
-        </button>
-        <button
-          onClick={() => openModal("body", "image")}
-          className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
-        >
-          🖼️ Afbeelding toevoegen
-        </button>
-
-        {/* Footer Select */}
-        <div className="my-4">
+        {/* 📌 Footer Select */}
+        <div className="mb-4">
           <label className="block text-sm">📌 Kies een Footer:</label>
           <select
-            value={selectedFooter || "footer1"}
-            onChange={(e) => setSelectedFooter?.(e.target.value)}
-            className="w-full bg-gray-700 text-white p-2 rounded"
+            value={selectedFooter}
+            onChange={(e) => setSelectedFooter(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700"
           >
-            {availableFooters.map((footer) => (
-              <option key={footer} value={footer}>
-                {footer.toUpperCase()}
-              </option>
-            ))}
+            <option value="footer1">FOOTER1</option>
+            <option value="footer2">FOOTER2</option>
+            <option value="footer3">FOOTER3</option>
           </select>
+          <button
+            onClick={() => openModal("footer", "text")}
+            className="bg-green-500 mt-2 w-full p-2 rounded"
+          >
+            ➕ Tekst toevoegen
+          </button>
+          <button
+            onClick={() => openModal("footer", "image")}
+            className="bg-blue-500 mt-1 w-full p-2 rounded"
+          >
+            🖼️ Afbeelding toevoegen
+          </button>
         </div>
-
-        <button
-          onClick={() => openModal("footer", "text")}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-700 m-1 w-full"
-        >
-          ➕ Tekst toevoegen
-        </button>
-        <button
-          onClick={() => openModal("footer", "image")}
-          className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 m-1 w-full"
-        >
-          🖼️ Afbeelding toevoegen
-        </button>
       </div>
     </div>
   );
