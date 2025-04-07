@@ -145,8 +145,6 @@ export default function Home() {
         setSelectedFooter={setSelectedFooter}
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-        logoUrl={logoUrl}
-        setLogoUrl={setLogoUrl}
         bodyItems={bodyItems}
         setBodyItems={setBodyItems}
         setBodyColor={() => {}} // optioneel, of implementeren

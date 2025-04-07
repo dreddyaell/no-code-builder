@@ -16,6 +16,7 @@ interface TaskbarProps {
   setBodyItems: React.Dispatch<React.SetStateAction<HeaderItem[]>>;
   bodyItems: HeaderItem[];
   setBodyColor: (color: string) => void;
+  
 }
 
 export default function Taskbar({
@@ -37,7 +38,7 @@ export default function Taskbar({
   const handleBodyImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
@@ -53,9 +54,8 @@ export default function Taskbar({
         x: 0,
         y: 0,
       };
-  
-      const current = Array.isArray(bodyItems) ? bodyItems : [];
-      const updated = [...current, newItem];
+
+      const updated = [...(Array.isArray(bodyItems) ? bodyItems : []), newItem];
       setBodyItems(updated);
       localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
     };
