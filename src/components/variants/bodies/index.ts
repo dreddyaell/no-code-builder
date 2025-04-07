@@ -1,7 +1,7 @@
-// ✅ Exporteer alle bodies individueel
+
 export { default as Body1 } from "./Body1";
 export { default as Body2 } from "./Body2";
-// export { default as Body3 } from "./Body3";
+export { default as Body3 } from "./Body3";
 // export { default as Body4 } from "./Body4";
 // export { default as Body5 } from "./Body5";
 /*export { default as Body6 } from "./Body6";
@@ -10,10 +10,9 @@ export { default as Body8 } from "./Body8";
 export { default as Body9 } from "./Body9";
 export { default as Body10 } from "./Body10";*/
 
-// ✅ Importeer alle bodies in een object
 import Body1 from "./Body1";
 import Body2 from "./Body2";
-// import Body3 from "./Body3";
+import Body3 from "./Body3";
 // import Body4 from "./Body4";
 // import Body5 from "./Body5";
 /*import Body6 from "./Body6";
@@ -22,11 +21,10 @@ import Body8 from "./Body8";
 import Body9 from "./Body9";
 import Body10 from "./Body10";*/
 
-// ✅ Zelfde structuur als headers
 const bodies: { [key: string]: any } = {
   body1: Body1,
   body2: Body2,
-  // body3: Body3,
+  body3: Body3,
   // body4: Body4,
   // body5: Body5,
   /*body6: Body6,

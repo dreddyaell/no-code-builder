@@ -16,7 +16,6 @@ function DraggableItem({
   item,
   onEdit,
   onDelete,
-  updateItemPosition,
   previewMode,
 }: {
   item: HeaderItem;

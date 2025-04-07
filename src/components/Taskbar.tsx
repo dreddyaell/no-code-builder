@@ -16,7 +16,6 @@ interface TaskbarProps {
   setBodyItems: React.Dispatch<React.SetStateAction<HeaderItem[]>>;
   bodyItems: HeaderItem[];
   setBodyColor: (color: string) => void;
-  
 }
 
 export default function Taskbar({
@@ -123,6 +122,7 @@ export default function Taskbar({
           >
             <option value="body1">BODY1</option>
             <option value="body2">BODY2</option>
+            <option value="body3">BODY3</option>
           </select>
 
           <button
