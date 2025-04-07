@@ -1,59 +1,94 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeaderItem } from "@/components/variants/types";
 
-interface Body3Props {
+interface Body4Props {
   items: HeaderItem[];
   previewMode?: boolean;
   backgroundColor?: string;
 }
 
-export default function Body3({ items, previewMode, backgroundColor }: Body3Props) {
-  const images = items.filter((item) => item.type === "image");
-  const [current, setCurrent] = useState(0);
+export default function Body4({ items, previewMode, backgroundColor }: Body4Props) {
+  const [products, setProducts] = useState([
+    { id: 1, name: "Product 1", description: "Beschrijving 1" },
+    { id: 2, name: "Product 2", description: "Beschrijving 2" },
+    { id: 3, name: "Product 3", description: "Beschrijving 3" },
+  ]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [tempName, setTempName] = useState("");
+  const [tempDesc, setTempDesc] = useState("");
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (images.length === 0) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+    if (editingId !== null) {
+      inputRef.current?.focus();
+    }
+  }, [editingId]);
+
+  const handleEditClick = (id: number, name: string, description: string) => {
+    setEditingId(id);
+    setTempName(name);
+    setTempDesc(description);
+  };
+
+  const handleSave = () => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === editingId ? { ...p, name: tempName, description: tempDesc } : p
+      )
+    );
+    setEditingId(null);
+  };
 
   return (
     <section
-      className="w-full min-h-[90vh] flex flex-col items-center overflow-x-hidden py-12 px-4"
-      style={{ backgroundColor: backgroundColor || "#121212" }}
+      className="w-full min-h-[90vh] flex flex-col items-center overflow-x-hidden px-4 py-10"
+      style={{ backgroundColor: backgroundColor || "#111827" }}
     >
-      {/* 👋 Welkomsttekst */}
-      <div className="max-w-3xl text-center text-white">
-        <h1 className="text-4xl font-bold mb-4">🛍️ Welkom bij onze Webshop</h1>
-        <p className="text-lg">Bekijk onze nieuwste producten en aanbiedingen hieronder!</p>
-      </div>
+      <h2 className="text-white text-4xl font-bold mb-10">🛍️ Welkom bij de Webshop</h2>
 
-      {/* 🖼️ Slideshow als er afbeeldingen zijn */}
-      {images.length > 0 && images[current] && (
-        <div className="w-full max-w-4xl h-[420px] mt-10">
-          <img
-            src={images[current].content}
-            alt={`Slide ${current + 1}`}
-            className="w-full h-full object-cover rounded-lg shadow-lg"
-          />
-
-          {/* ⬤ Indicatoren */}
-          <div className="flex justify-center mt-4 gap-2">
-            {images.map((_, i) => (
-              <div
-                key={i}
-                className={`w-3 h-3 rounded-full ${
-                  i === current ? "bg-white" : "bg-gray-600"
-                }`}
-              />
-            ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white rounded-2xl p-6 shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer relative"
+            onClick={() =>
+              !previewMode &&
+              handleEditClick(product.id, product.name, product.description)
+            }
+          >
+            {editingId === product.id ? (
+              <div>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  className="w-full mb-2 border-b-2 border-gray-500 text-lg font-bold"
+                />
+                <input
+                  type="text"
+                  value={tempDesc}
+                  onChange={(e) => setTempDesc(e.target.value)}
+                  onBlur={handleSave}
+                  onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                  className="w-full text-gray-700 border-b border-gray-300"
+                />
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-xl font-semibold">{product.name}</h3>
+                <p className="text-gray-600">{product.description}</p>
+                {!previewMode && (
+                  <span className="absolute top-2 right-3 text-gray-400 text-sm">✏️</span>
+                )}
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </section>
   );
 }

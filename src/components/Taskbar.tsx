@@ -123,6 +123,7 @@ export default function Taskbar({
             <option value="body1">BODY1</option>
             <option value="body2">BODY2</option>
             <option value="body3">BODY3</option>
+            <option value="body4">BODY4</option>
           </select>
 
           <button
