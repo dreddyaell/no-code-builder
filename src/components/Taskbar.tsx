@@ -1,4 +1,5 @@
 "use client";
+
 import { HeaderItem } from "@/components/variants/types";
 
 interface TaskbarProps {
@@ -13,10 +14,13 @@ interface TaskbarProps {
   setSelectedFooter: (footerType: string) => void;
   previewMode: boolean;
   setPreviewMode: (val: boolean) => void;
-  setBodyItems: React.Dispatch<React.SetStateAction<HeaderItem[]>>;
-  bodyItems: HeaderItem[];
+  bodyItems: HeaderItem[]; // Let op! Alleen de geselecteerde
+  setBodyItems: (items: HeaderItem[]) => void; // per geselecteerde body
   setBodyColor: (color: string) => void;
+  logoUrl: string;
+  setLogoUrl: (url: string) => void;
 }
+
 
 export default function Taskbar({
   isOpen,
@@ -35,6 +39,12 @@ export default function Taskbar({
   setBodyColor,
 }: TaskbarProps) {
   const handleBodyImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const allowedBodies = ["body2", "body3"];
+    if (!allowedBodies.includes(selectedBody)) {
+      alert("📸 Alleen body2 en body3 ondersteunen afbeeldingen.");
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -54,12 +64,14 @@ export default function Taskbar({
         y: 0,
       };
 
-      const updated = [...(Array.isArray(bodyItems) ? bodyItems : []), newItem];
+      const updated = [...bodyItems, newItem];
       setBodyItems(updated);
       localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
     };
+
     reader.readAsDataURL(file);
   };
+
 
   return (
     <div className="fixed top-1/2 left-2 -translate-y-1/2 z-50">
@@ -73,7 +85,7 @@ export default function Taskbar({
       <div className={`transition-all ${isOpen ? "block" : "hidden"} bg-gray-800 text-white p-4 rounded shadow-md w-64`}>
         <h3 className="text-lg font-bold mb-4">⚙️ Instellingen</h3>
 
-        {/* Preview Mode */}
+        {/* Preview Toggle */}
         <div className="flex justify-between items-center mb-4">
           <span>🎬 Preview:</span>
           <button
@@ -84,97 +96,64 @@ export default function Taskbar({
           </button>
         </div>
 
-        {/* 🖥️ Header Select */}
         <div className="mb-4">
-          <label className="block text-sm">🖥️ Kies een Header:</label>
+          
+
+          <label className="block text-sm">🖥️ Header:</label>
+          <button onClick={() => openModal("header", "text")} className="bg-green-500 mt-2 w-full p-2 rounded">➕ Tekst toevoegen</button>
+          <button onClick={() => openModal("header", "image")} className="bg-blue-500 mt-1 w-full p-2 rounded">🖼️ Afbeelding</button>
           <select
             value={selectedHeader}
             onChange={(e) => setSelectedHeader(e.target.value)}
             className="w-full p-2 rounded bg-gray-700"
           >
-            <option value="header1">HEADER1</option>
-            <option value="header2">HEADER2</option>
-            <option value="header3">HEADER3</option>
-            <option value="header4">HEADER4</option>
-            <option value="header5">HEADER5</option>
+            {["header1", "header2", "header3", "header4", "header5"].map((h) => (
+              <option key={h} value={h}>{h.toUpperCase()}</option>
+            ))}
           </select>
-          <button
-            onClick={() => openModal("header", "text")}
-            className="bg-green-500 mt-2 w-full p-2 rounded"
-          >
-            ➕ Tekst toevoegen
-          </button>
-          <button
-            onClick={() => openModal("header", "image")}
-            className="bg-blue-500 mt-1 w-full p-2 rounded"
-          >
-            🖼️ Afbeelding toevoegen
-          </button>
+
         </div>
 
-        {/* 🧱 Body Select */}
+        {/* Body */}
         <div className="mb-4">
-          <label className="block text-sm">🧱 Kies een Body:</label>
+          <label className="block text-sm">🧱 Body:</label>
           <select
             value={selectedBody}
             onChange={(e) => setSelectedBody(e.target.value)}
             className="w-full p-2 rounded bg-gray-700"
           >
-            <option value="body1">BODY1</option>
-            <option value="body2">BODY2</option>
-            <option value="body3">BODY3</option>
-            <option value="body4">BODY4</option>
+            {["body1", "body2", "body3", "body4", "body5"].map((b) => (
+              <option key={b} value={b}>{b.toUpperCase()}</option>
+            ))}
           </select>
-
-          <button
-            onClick={() => openModal("body", "text")}
-            className="bg-green-500 mt-2 w-full p-2 rounded"
-          >
-            ➕ Tekst toevoegen
-          </button>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleBodyImageUpload}
-            className="mt-2 w-full file:cursor-pointer file:rounded file:bg-blue-600 file:text-white"
-          />
-
-          <div className="mt-4">
-            <label className="block text-sm">🎨 Body Kleur:</label>
+          <label className="cursor-pointer flex items-center justify-center w-full p-3 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition">
+            Klik hier om een afbeelding te selecteren
             <input
-              type="color"
-              defaultValue="#1f1f1f"
-              onChange={(e) => setBodyColor(e.target.value)}
-              className="w-full bg-transparent border-none"
+              type="file"
+              accept="image/*"
+              onChange={handleBodyImageUpload}
+              className="hidden"
             />
-          </div>
+          </label>
+
+          <p className="text-xs text-gray-300 mt-1">
+            Max 500KB. Alleen zichtbaar in body2 & body3.
+          </p>
+
         </div>
 
-        {/* 📌 Footer Select */}
+        {/* Footer */}
         <div className="mb-4">
-          <label className="block text-sm">📌 Kies een Footer:</label>
+          <label className="block text-sm">📌 Footer:</label>
           <select
             value={selectedFooter}
             onChange={(e) => setSelectedFooter(e.target.value)}
             className="w-full p-2 rounded bg-gray-700"
           >
-            <option value="footer1">FOOTER1</option>
-            <option value="footer2">FOOTER2</option>
-            <option value="footer3">FOOTER3</option>
+            {["footer1", "footer2", "footer3"].map((f) => (
+              <option key={f} value={f}>{f.toUpperCase()}</option>
+            ))}
           </select>
-          <button
-            onClick={() => openModal("footer", "text")}
-            className="bg-green-500 mt-2 w-full p-2 rounded"
-          >
-            ➕ Tekst toevoegen
-          </button>
-          <button
-            onClick={() => openModal("footer", "image")}
-            className="bg-blue-500 mt-1 w-full p-2 rounded"
-          >
-            🖼️ Afbeelding toevoegen
-          </button>
         </div>
       </div>
     </div>

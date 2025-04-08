@@ -12,21 +12,20 @@ export default function Home() {
   const [selectedFooter, setSelectedFooter] = useState("footer1");
 
   const [headerItems, setHeaderItems] = useState<{ [key: string]: HeaderItem[] }>({});
-  const [bodyItems, setBodyItems] = useState<HeaderItem[]>(() => {
-    const saved = localStorage.getItem("bodyItems-body1");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [bodyItems, setBodyItems] = useState<{ [key: string]: HeaderItem[] }>({});
   const [footerItems, setFooterItems] = useState<{ [key: string]: FooterItem[] }>({});
 
   const [isTaskbarOpen, setIsTaskbarOpen] = useState(true);
   const [logoUrl, setLogoUrl] = useState("/logo.png");
   const [previewMode, setPreviewMode] = useState(false);
+  const [bodyColor, setBodyColor] = useState("#1f1f1f");
 
   useEffect(() => {
     const savedHeader = localStorage.getItem("selectedHeader") || "header1";
     const savedBody = localStorage.getItem("selectedBody") || "body1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
     const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
+    
 
     setSelectedHeader(savedHeader);
     setSelectedBody(savedBody);
@@ -35,9 +34,11 @@ export default function Home() {
 
     const savedHeaderItems = JSON.parse(localStorage.getItem(`headerItems-${savedHeader}`) || "[]");
     const savedFooterItems = JSON.parse(localStorage.getItem(`footerItems-${savedFooter}`) || "[]");
+    const savedBodyItems = JSON.parse(localStorage.getItem(`bodyItems-${savedBody}`) || "[]");
 
     setHeaderItems({ [savedHeader]: savedHeaderItems });
     setFooterItems({ [savedFooter]: savedFooterItems });
+    setBodyItems({ [savedBody]: savedBodyItems });
   }, []);
 
   useEffect(() => {
@@ -45,30 +46,32 @@ export default function Home() {
   }, [logoUrl]);
 
   const openModal = (section: "header" | "body" | "footer", type: "text" | "image") => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+  
+    const newItem: HeaderItem = {
+      id: crypto.randomUUID(),
+      type,
+      content: type === "image" ? "" : "Nieuwe tekst",
+      width: 150,
+      height: 40,
+      fontSize: 14,
+      fontFamily: "Arial",
+      textColor: "#000000",
+      x: 50,
+      y: 50,
+    };
+  
     if (type === "image") {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-
       input.onchange = () => {
         const file = input.files?.[0];
         if (!file) return;
-
+  
         const reader = new FileReader();
         reader.onload = () => {
-          const newItem: HeaderItem = {
-            id: crypto.randomUUID(),
-            type: "image",
-            content: reader.result as string,
-            width: 300,
-            height: 200,
-            fontSize: 14,
-            fontFamily: "Arial",
-            textColor: "#000000",
-            x: 50,
-            y: 50,
-          };
-
+          const updatedItem = { ...newItem, content: reader.result as string };
+  
           if (section === "header") {
             setHeaderItems((prev) => {
               const updated = [...(prev[selectedHeader] || []), newItem];
@@ -83,33 +86,37 @@ export default function Home() {
             });
           } else if (section === "body") {
             setBodyItems((prev) => {
-              const updated = [...prev, newItem];
+              const updated = [...(prev[selectedBody] || []), newItem];
               localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
-              return updated;
+              return { ...prev, [selectedBody]: updated };
             });
           }
         };
         reader.readAsDataURL(file);
       };
-
+  
       input.click();
       return;
     }
 
-    // default: text element
-    const newItem: HeaderItem = {
-      id: crypto.randomUUID(),
-      type: "text",
-      content: "Nieuwe tekst",
-      width: 150,
-      height: 40,
-      fontSize: 14,
-      fontFamily: "Arial",
-      textColor: "#000000",
-      x: 50,
-      y: 50,
-    };
+    function updateBodyItemsMap(
+      selectedBody: string,
+      modify: (prevItems: HeaderItem[]) => HeaderItem[],
+      setBodyItems: React.Dispatch<React.SetStateAction<{ [key: string]: HeaderItem[] }>>
+    ) {
+      setBodyItems((prev) => {
+        const current = prev[selectedBody] || [];
+        const updatedItems = modify(current);
+        const updated = { ...prev, [selectedBody]: updatedItems };
+        localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updatedItems));
+        return updated;
+      });
+    }
+    updateBodyItemsMap(selectedBody, (prev) => [...prev, newItem], setBodyItems);
 
+    
+
+    // Default: text toevoegen
     if (section === "header") {
       setHeaderItems((prev) => {
         const updated = [...(prev[selectedHeader] || []), newItem];
@@ -124,9 +131,9 @@ export default function Home() {
       });
     } else if (section === "body") {
       setBodyItems((prev) => {
-        const updated = [...prev, newItem];
+        const updated = [...(prev[selectedBody] || []), newItem];
         localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
-        return updated;
+        return { ...prev, [selectedBody]: updated };
       });
     }
   };
@@ -145,26 +152,35 @@ export default function Home() {
         setSelectedFooter={setSelectedFooter}
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-        bodyItems={bodyItems}
-        setBodyItems={setBodyItems}
-        setBodyColor={() => {}} // optioneel, of implementeren
+        logoUrl={logoUrl}
+        setLogoUrl={setLogoUrl}
+        bodyItems={bodyItems[selectedBody] || []}
+        setBodyItems={(items) => {
+          setBodyItems((prev) => {
+            const updatedMap = { ...prev, [selectedBody]: items };
+            localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(items));
+            return updatedMap;
+          });
+        }}
+        setBodyColor={setBodyColor}
       />
 
       <main className="flex-1 flex flex-col overflow-hidden">
-        <LayoutBuilder
-          selectedHeader={selectedHeader}
-          logoUrl={logoUrl}
-          setLogoUrl={setLogoUrl}
-          headerItems={headerItems[selectedHeader] || []}
-          setHeaderItems={setHeaderItems}
-          selectedFooter={selectedFooter}
-          footerItems={footerItems[selectedFooter] || []}
-          setFooterItems={setFooterItems}
-          selectedBody={selectedBody}
-          bodyItems={bodyItems}
-          setBodyItems={setBodyItems}
-          previewMode={previewMode}
-        />
+      <LayoutBuilder
+  selectedHeader={selectedHeader}
+  logoUrl={logoUrl}
+  setLogoUrl={setLogoUrl}
+  headerItems={headerItems[selectedHeader] || []}
+  setHeaderItems={setHeaderItems}
+  selectedFooter={selectedFooter}
+  footerItems={footerItems[selectedFooter] || []}
+  setFooterItems={setFooterItems}
+  selectedBody={selectedBody}
+  bodyItems={bodyItems} // ✅ Geef volledige map door
+  setBodyItems={setBodyItems}
+  previewMode={previewMode}
+/>
+
       </main>
     </div>
   );

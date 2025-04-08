@@ -11,10 +11,11 @@ interface Body4Props {
 
 export default function Body4({ items, previewMode, backgroundColor }: Body4Props) {
   const [products, setProducts] = useState([
-    { id: 1, name: "Product 1", description: "Beschrijving 1" },
-    { id: 2, name: "Product 2", description: "Beschrijving 2" },
-    { id: 3, name: "Product 3", description: "Beschrijving 3" },
+    { id: 1, name: "Product 1", description: "Beschrijving 1", rating: 0 },
+    { id: 2, name: "Product 2", description: "Beschrijving 2", rating: 0 },
+    { id: 3, name: "Product 3", description: "Beschrijving 3", rating: 0 },
   ]);
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [tempName, setTempName] = useState("");
   const [tempDesc, setTempDesc] = useState("");
@@ -42,6 +43,12 @@ export default function Body4({ items, previewMode, backgroundColor }: Body4Prop
     setEditingId(null);
   };
 
+  const handleRating = (id: number, stars: number) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, rating: stars } : p))
+    );
+  };
+
   return (
     <section
       className="w-full min-h-[90vh] flex flex-col items-center overflow-x-hidden px-4 py-10"
@@ -66,8 +73,11 @@ export default function Body4({ items, previewMode, backgroundColor }: Body4Prop
                   type="text"
                   value={tempName}
                   onChange={(e) => setTempName(e.target.value)}
+                  onBlur={handleSave}
+                  onKeyDown={(e) => e.key === "Enter" && handleSave()}
                   className="w-full mb-2 border-b-2 border-gray-500 text-lg font-bold"
                 />
+
                 <input
                   type="text"
                   value={tempDesc}
@@ -84,6 +94,21 @@ export default function Body4({ items, previewMode, backgroundColor }: Body4Prop
                 {!previewMode && (
                   <span className="absolute top-2 right-3 text-gray-400 text-sm">✏️</span>
                 )}
+
+                <div className="mt-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!previewMode) handleRating(product.id, star);
+                      }}
+                      className={`text-xl ${star <= product.rating ? "text-yellow-400" : "text-gray-400"}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
