@@ -41,20 +41,17 @@ function DraggableHeaderItem({
     width: item.width,
     height: item.height,
     zIndex: 10,
-    pointerEvents: previewMode ? "none" : "auto", // ✅ Geen interactie in preview
+    pointerEvents: previewMode ? "none" : "auto",
   };
 
   return (
     <div ref={setNodeRef} style={style}>
       <div className="relative w-full h-full p-1 text-center rounded">
-        {/* ⠿ Drag Handle */}
         {!previewMode && (
           <div {...listeners} {...attributes} className="cursor-move absolute top-0 left-0 px-2 py-1 z-10 text-black">
             ⠿
           </div>
         )}
-
-        {/* Content */}
         {item.type === "text" ? (
           <div
             style={{
@@ -73,8 +70,6 @@ function DraggableHeaderItem({
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         )}
-
-        {/* Bewerken / Verwijderen */}
         {!previewMode && (
           <div className="flex justify-center gap-1 mt-1">
             <button
@@ -95,7 +90,6 @@ function DraggableHeaderItem({
     </div>
   );
 }
-
 
 export default function Header1({
   items,
@@ -174,15 +168,16 @@ export default function Header1({
         </div>
       </div>
 
+      {/* ➕ Extra Draggable items */}
       <DndContext onDragEnd={handleDragEnd}>
         {items.map((item) => (
           <DraggableHeaderItem
-          key={item.id}
-          item={item}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          updateItemPosition={updateItemPosition}
-          previewMode={previewMode}
+            key={item.id}
+            item={item}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            updateItemPosition={updateItemPosition}
+            previewMode={previewMode}
           />
         ))}
       </DndContext>

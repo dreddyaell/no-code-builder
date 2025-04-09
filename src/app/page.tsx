@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import footers from "@/components/variants/footers";
+import { HeaderItem, FooterItem } from "@/components/variants/types";
 import Taskbar from "@/components/Taskbar";
 import LayoutBuilder from "@/components/LayoutBuilder";
-import { FooterItem, HeaderItem } from "@/components/variants/types";
 
 export default function Home() {
   const [selectedHeader, setSelectedHeader] = useState("header1");
@@ -25,7 +24,6 @@ export default function Home() {
     const savedBody = localStorage.getItem("selectedBody") || "body1";
     const savedFooter = localStorage.getItem("selectedFooter") || "footer1";
     const savedLogo = localStorage.getItem("logoUrl") || "/logo.png";
-    
 
     setSelectedHeader(savedHeader);
     setSelectedBody(savedBody);
@@ -49,7 +47,7 @@ export default function Home() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-  
+
     const newItem: HeaderItem = {
       id: crypto.randomUUID(),
       type,
@@ -62,31 +60,31 @@ export default function Home() {
       x: 50,
       y: 50,
     };
-  
+
     if (type === "image") {
       input.onchange = () => {
         const file = input.files?.[0];
         if (!file) return;
-  
+
         const reader = new FileReader();
         reader.onload = () => {
           const updatedItem = { ...newItem, content: reader.result as string };
-  
+
           if (section === "header") {
             setHeaderItems((prev) => {
-              const updated = [...(prev[selectedHeader] || []), newItem];
+              const updated = [...(prev[selectedHeader] || []), updatedItem];
               localStorage.setItem(`headerItems-${selectedHeader}`, JSON.stringify(updated));
               return { ...prev, [selectedHeader]: updated };
             });
           } else if (section === "footer") {
             setFooterItems((prev) => {
-              const updated = [...(prev[selectedFooter] || []), newItem];
+              const updated = [...(prev[selectedFooter] || []), updatedItem];
               localStorage.setItem(`footerItems-${selectedFooter}`, JSON.stringify(updated));
               return { ...prev, [selectedFooter]: updated };
             });
           } else if (section === "body") {
             setBodyItems((prev) => {
-              const updated = [...(prev[selectedBody] || []), newItem];
+              const updated = [...(prev[selectedBody] || []), updatedItem];
               localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updated));
               return { ...prev, [selectedBody]: updated };
             });
@@ -94,29 +92,12 @@ export default function Home() {
         };
         reader.readAsDataURL(file);
       };
-  
+
       input.click();
       return;
     }
 
-    function updateBodyItemsMap(
-      selectedBody: string,
-      modify: (prevItems: HeaderItem[]) => HeaderItem[],
-      setBodyItems: React.Dispatch<React.SetStateAction<{ [key: string]: HeaderItem[] }>>
-    ) {
-      setBodyItems((prev) => {
-        const current = prev[selectedBody] || [];
-        const updatedItems = modify(current);
-        const updated = { ...prev, [selectedBody]: updatedItems };
-        localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updatedItems));
-        return updated;
-      });
-    }
-    updateBodyItemsMap(selectedBody, (prev) => [...prev, newItem], setBodyItems);
-
-    
-
-    // Default: text toevoegen
+    // Voor TEXT
     if (section === "header") {
       setHeaderItems((prev) => {
         const updated = [...(prev[selectedHeader] || []), newItem];
@@ -157,30 +138,40 @@ export default function Home() {
         bodyItems={bodyItems[selectedBody] || []}
         setBodyItems={(items) => {
           setBodyItems((prev) => {
-            const updatedMap = { ...prev, [selectedBody]: items };
+            const updated = { ...prev, [selectedBody]: items };
             localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(items));
-            return updatedMap;
+            return updated;
           });
         }}
         setBodyColor={setBodyColor}
       />
 
       <main className="flex-1 flex flex-col overflow-hidden">
-      <LayoutBuilder
-  selectedHeader={selectedHeader}
-  logoUrl={logoUrl}
-  setLogoUrl={setLogoUrl}
-  headerItems={headerItems[selectedHeader] || []}
-  setHeaderItems={setHeaderItems}
-  selectedFooter={selectedFooter}
-  footerItems={footerItems[selectedFooter] || []}
-  setFooterItems={setFooterItems}
-  selectedBody={selectedBody}
-  bodyItems={bodyItems} // ✅ Geef volledige map door
-  setBodyItems={setBodyItems}
-  previewMode={previewMode}
-/>
-
+        <LayoutBuilder
+          selectedHeader={selectedHeader}
+          logoUrl={logoUrl}
+          setLogoUrl={setLogoUrl}
+          headerItems={headerItems[selectedHeader] || []}
+          setHeaderItems={setHeaderItems}
+          selectedFooter={selectedFooter}
+          footerItems={footerItems}
+          setFooterItems={setFooterItems}
+          selectedBody={selectedBody}
+          bodyItems={bodyItems[selectedBody] || []}
+          setBodyItems={(items) => {
+            setBodyItems((prev) => {
+              const current = prev[selectedBody] || [];
+              const updatedItems = [...current, /* jouw nieuwe item of items */];
+              const updatedMap = {
+                ...prev,
+                [selectedBody]: updatedItems,
+              };
+              localStorage.setItem(`bodyItems-${selectedBody}`, JSON.stringify(updatedItems));
+              return updatedMap;
+            });                  
+          }}
+          previewMode={previewMode}
+        />
       </main>
     </div>
   );
