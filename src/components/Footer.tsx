@@ -1,6 +1,6 @@
 // src/components/Footer.tsx
 "use client";
-
+import React from "react";
 import { useState, useEffect } from "react";
 import footers from "@/components/variants/footers";
 import { FooterItem } from "@/components/variants/types";

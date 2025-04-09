@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useEffect, useState } from "react";
 import { HeaderItem, FooterItem } from "@/components/variants/types";
 import headers from "@/components/variants/headers";

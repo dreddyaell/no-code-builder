@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { HeaderItem } from "@/components/variants/types";
 
 interface TaskbarProps {
@@ -71,7 +71,7 @@ export default function Taskbar({
 
     reader.readAsDataURL(file);
   };
-
+  
 
   return (
     <div className="fixed top-1/2 left-2 -translate-y-1/2 z-50">
@@ -122,7 +122,7 @@ export default function Taskbar({
             onChange={(e) => setSelectedBody(e.target.value)}
             className="w-full p-2 rounded bg-gray-700"
           >
-            {["body1", "body2", "body3", "body4", "body5"].map((b) => (
+            {["body1", "body2", "body3", "body4"].map((b) => (
               <option key={b} value={b}>{b.toUpperCase()}</option>
             ))}
           </select>
@@ -133,6 +133,7 @@ export default function Taskbar({
               accept="image/*"
               onChange={handleBodyImageUpload}
               className="hidden"
+               data-testid="file-upload"
             />
           </label>
 
@@ -150,7 +151,7 @@ export default function Taskbar({
             onChange={(e) => setSelectedFooter(e.target.value)}
             className="w-full p-2 rounded bg-gray-700"
           >
-            {["footer1", "footer2", "footer3"].map((f) => (
+            {["footer1", "footer2", "footer3", "footer4", "footer5"].map((f) => (
               <option key={f} value={f}>{f.toUpperCase()}</option>
             ))}
           </select>

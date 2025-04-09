@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FooterProps } from "../types";
-
+import React from "react";
 export default function Footer2({ items }: FooterProps) {
   const [email, setEmail] = useState("");
 

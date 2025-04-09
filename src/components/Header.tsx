@@ -1,6 +1,7 @@
 import headers from "@/components/variants/headers";
 import { HeaderItem } from "@/components/variants/types";
 import type { DragEndEvent } from "@dnd-kit/core";
+import React from "react";
 
 export interface HeaderProps {
   selectedHeader: string;

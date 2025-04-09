@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { FooterItem } from "@/components/variants/types";
 
 interface Footer1Props {
@@ -26,6 +26,9 @@ export default function Footer1({ items }: Footer1Props) {
         {/* Language switcher */}
         <div className="text-xs text-gray-400">🌐 NL</div>
       </div>
+      <div className="text-xs text-gray-400 text-center mt-4">
+  © {new Date().getFullYear()} NoCode Studio. Alle rechten voorbehouden.
+</div>
     </footer>
   );
 }

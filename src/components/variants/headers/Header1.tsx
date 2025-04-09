@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { HeaderItem } from "@/components/variants/types";
 import Image from "next/image";
 import { useRef } from "react";

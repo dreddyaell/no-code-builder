@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useRef } from "react";
 import Image from "next/image";
 import { DndContext, DragEndEvent, useDraggable } from "@dnd-kit/core";

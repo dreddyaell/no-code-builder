@@ -18,7 +18,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    // ✅ Path alias support
     "baseUrl": "./src",
     "paths": {
       "@/*": [
@@ -26,6 +25,11 @@
       ]
     },
     "incremental": true,
+    // ✅ DIT moet erin
+    "types": [
+      "jest",
+      "node"
+    ],
     "plugins": [
       {
         "name": "next"
