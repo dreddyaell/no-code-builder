@@ -21,7 +21,6 @@ export default function Body({
   updateItemPosition,
   previewMode,
 }: BodyProps) {
-  // Fallback naar "body1" als de key niet bestaat
   const BodyComponent = bodies[selectedBody] || bodies["body1"];
 
   return (

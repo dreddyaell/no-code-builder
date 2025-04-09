@@ -25,7 +25,6 @@
       ]
     },
     "incremental": true,
-    // ✅ DIT moet erin
     "types": [
       "jest",
       "node"

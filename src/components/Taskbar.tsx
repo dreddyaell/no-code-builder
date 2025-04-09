@@ -14,8 +14,8 @@ interface TaskbarProps {
   setSelectedFooter: (footerType: string) => void;
   previewMode: boolean;
   setPreviewMode: (val: boolean) => void;
-  bodyItems: HeaderItem[]; // Let op! Alleen de geselecteerde
-  setBodyItems: (items: HeaderItem[]) => void; // per geselecteerde body
+  bodyItems: HeaderItem[];
+  setBodyItems: (items: HeaderItem[]) => void; 
   setBodyColor: (color: string) => void;
   logoUrl: string;
   setLogoUrl: (url: string) => void;

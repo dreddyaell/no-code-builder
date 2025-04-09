@@ -40,7 +40,7 @@ export default function SortableItem({
           <span
             {...listeners}
             className="cursor-grab text-xl px-2"
-            tabIndex={-1} // prevent focus (which triggers keyboard mode)
+            tabIndex={-1} 
           >
             ⠿
           </span>

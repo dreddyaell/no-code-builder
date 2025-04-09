@@ -1,4 +1,4 @@
-// src/components/DynamicComponent.tsx
+
 "use client";
 import React from "react";
 import Header1 from "./variants/headers/Header1";

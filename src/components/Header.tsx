@@ -12,7 +12,7 @@ export interface HeaderProps {
   onDelete?: (id: string) => void;
   onDragEnd?: (event: DragEndEvent) => void;
   updateItemPosition?: (id: string, x: number, y: number) => void;
-  previewMode?: boolean; // ✅
+  previewMode?: boolean; 
 }
 
 export default function Header({
@@ -24,7 +24,7 @@ export default function Header({
   onDelete,
   onDragEnd,
   updateItemPosition,
-  previewMode, // ✅
+  previewMode, 
 }: HeaderProps) {
   const HeaderComponent = headers[selectedHeader] || headers["header1"];
 
