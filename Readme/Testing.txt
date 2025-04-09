@@ -1,0 +1,1 @@
+Om de code te testen plaats te babel config in de no code builder. Ik kwam er later achter dat het next app niet wil runnen met de file aanwezig.
