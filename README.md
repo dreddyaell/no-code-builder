@@ -103,6 +103,7 @@ mkdir C:\Development
 Move-Item "C:\Users\Gebruiker\OneDrive\Documenten\no-code-builder" -Destination "C:\Development"
 ________________________________________
 5. Projectstructuur
+```
 src/
 ├── app/                  # Pagina's (Next.js routing)
 │   └── page.tsx          # Hoofdpagina met alle logica
@@ -115,7 +116,7 @@ src/
 │       └── bodies/
 ├── Test/                 # Unit tests per component
 ├── styles/               # Tailwind configuratie
-
+```
 ________________________________________
 6. Eerste Opstart
 1.	Start met npm run dev.
