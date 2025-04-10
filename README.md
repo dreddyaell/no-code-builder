@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize.
 
 ## Learn More
 
@@ -48,16 +48,11 @@ ________________________________________
 Deze handleiding beschrijft hoe een nieuwe gebruiker de No-Code Website Builder correct kan installeren en uitvoeren. Daarnaast bevat het veelvoorkomende foutmeldingen met oplossingen.
 2. Benodigde Software
 Om het project correct te draaien, zorg dat de volgende software is geïnstalleerd:
-Software	Downloadlink
 Node.js (LTS versie)	Node.js Download
 
 Git	Git Download
 
 VS Code (Aanbevolen IDE)	VS Code Download
-
-Strapi (Headless CMS)	Strapi Documentatie
-
-Firebase (Authenticatie & Database)	Firebase Console
 
 ________________________________________
 3. Installatie Stappen
@@ -73,11 +68,6 @@ npm install
 Stap 3: Start de ontwikkelserver
 npm run dev
 •	Open http://localhost:3000 in je browser om de website te bekijken.
-Stap 4: Start de backend (Strapi CMS)
-cd backend
-npm install
-npm run develop
-•	Open http://localhost:1337/admin en maak een account aan.
 ________________________________________
 4. Veelvoorkomende Fouten & Oplossingen
 1. Node.js is niet geïnstalleerd
@@ -115,19 +105,24 @@ mkdir C:\Development
 Move-Item "C:\Users\Gebruiker\OneDrive\Documenten\no-code-builder" -Destination "C:\Development"
 ________________________________________
 5. Projectstructuur
-/no-code-builder
-├── /app
-│   ├── /components
-│   ├── /pages
-├── /backend (Strapi CMS)
-├── /public
-├── .gitignore
-├── package.json
-├── README.md
+src/
+├── app/                  # Pagina's (Next.js routing)
+│   └── page.tsx          # Hoofdpagina met alle logica
+├── components/           
+│   ├── Taskbar.tsx       # Instellingenpaneel
+│   ├── LayoutBuilder.tsx # Opbouw van layout met preview
+│   └── variants/         # Alle visuele componenten
+│       ├── headers/
+│       ├── footers/
+│       └── bodies/
+├── Test/                 # Unit tests per component
+├── styles/               # Tailwind configuratie
+
 ________________________________________
 6. Eerste Opstart
-1.	Start de frontend met npm run dev.
-2.	Start de backend met npm run develop.
-3.	Open localhost:3000 en localhost:1337.
+1.	Start met npm run dev.
+3.	Open localhost:3000
 ________________________________________
+
+Voor het testen van de code lees de readme in de no code map.
 
